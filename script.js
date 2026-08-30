@@ -21,13 +21,25 @@ const LOCATION_CONFIGS = {
         coords: [75.786169, 30.8300446],
         modelUrl: "model.glb",
 
-        url: "IPX/index.html",
+        url: "../IPX/index.html",
 
         transform: {
-          position: [-80, -20, -50],
+          position: [0, -100, -50],
           rotation: [Math.PI / 2, 0, 0],
-          scale: [200, 200, 200],
+          scale: [350, 350, 350],
           maxZoom: 17
+        },
+
+        // ── LOGO CONTROLS ──────────────────────────────────
+        logo: {
+          image: "Logo.png",
+          width: 150,
+          speed: 1,
+          scale: 1,
+          offsetX: 0,
+          offsetY: -20,
+          bounce: 12,
+          opacity: 1
         }
       }
     ]
@@ -355,6 +367,27 @@ const projects = locConf.projects;
 let map, scene, camera, renderer, model;
 let currentProject = null;
 
+// ── BOUNCING PROJECT LOGO ───────────────────────────────────
+// Controls are per-project.
+// speed     = bounce cycles per second
+// scale     = logo size multiplier
+// offsetX   = pixels right (+) / left (-)
+// offsetY   = pixels down (+) / up (-)
+// bounce    = maximum bounce height in pixels
+const PROJECT_LOGO_DEFAULTS = {
+  image: "Logo.png",
+  width: 150,
+  speed: 1.2,
+  scale: 1,
+  offsetX: 0,
+  offsetY: 0,
+  bounce: 12,
+  opacity: 1
+};
+
+let projectLogoMarkers = [];
+let projectLogoAnimationFrame = null;
+
 // ── INIT ─────────────────────────────────────────────────────
 window.onload = () => {
 
@@ -584,6 +617,7 @@ window.onload = () => {
   }
 
   setupProjects();
+  setupProjectLogos();
   setupThreeLayer();
   buildPanel();
 };
@@ -658,7 +692,7 @@ const USEFUL_PLACES = [
     textColor: "#FFFFFF",
     textSize: 16,
     textWeight: "600",
-     zIndex: 20,
+    zIndex: 20,
   },
   {
     name: "Sardar Jewellers",
@@ -669,7 +703,7 @@ const USEFUL_PLACES = [
     textColor: "#FFFFFF",
     textSize: 16,
     textWeight: "600",
-     zIndex: 18,
+    zIndex: 18,
   }
 ];
 
@@ -802,7 +836,6 @@ function setupProjects() {
 
     el.innerHTML = `
   <div class="marker-dot"></div>
-  <button class="explore-btn">Eldeco Viviana Select</button>
 `;
 
     new maplibregl.Marker({ element: el })
@@ -812,6 +845,111 @@ function setupProjects() {
       .addEventListener('click', () => focusProject(i));
   });
 }
+function setupProjectLogos() {
+  if (!map) return;
+
+  // Remove previous logo markers if this function is called again.
+  projectLogoMarkers.forEach(({ marker }) => marker.remove());
+  projectLogoMarkers = [];
+
+  projects.forEach((project, index) => {
+    if (!project || !Array.isArray(project.coords)) return;
+
+    const settings = {
+      ...PROJECT_LOGO_DEFAULTS,
+      ...(project.logo || {})
+    };
+
+    const root = document.createElement("div");
+    root.className = "project-logo-marker";
+
+    Object.assign(root.style, {
+      position: "relative",
+      width: "1px",
+      height: "1px",
+      padding: "0",
+      margin: "0",
+      pointerEvents: "none",
+      overflow: "visible",
+      zIndex: "1100"
+    });
+
+    const img = document.createElement("img");
+    img.src = settings.image || PROJECT_LOGO_DEFAULTS.image;
+    img.alt = `${project.name || "Project"} logo`;
+    img.draggable = false;
+
+    Object.assign(img.style, {
+      position: "absolute",
+      left: "0",
+      top: "0",
+      width: `${Number(settings.width) || PROJECT_LOGO_DEFAULTS.width}px`,
+      height: "auto",
+      maxWidth: "none",
+      maxHeight: "none",
+      display: "block",
+      margin: "0",
+      padding: "0",
+      pointerEvents: "none",
+      userSelect: "none",
+      transformOrigin: "center bottom",
+      transform: "translateX(-50%)",
+      opacity: String(settings.opacity ?? 1),
+      filter: "drop-shadow(0 3px 6px rgba(0,0,0,.45))",
+      willChange: "transform, top"
+    });
+
+    root.appendChild(img);
+
+    const marker = new maplibregl.Marker({
+      element: root,
+      anchor: "bottom"
+    })
+      .setLngLat(project.coords)
+      .addTo(map);
+
+    projectLogoMarkers.push({
+      marker,
+      root,
+      img,
+      settings,
+      index,
+      phase: index * 0.35,
+      hidden: false
+    });
+  });
+
+  if (!projectLogoAnimationFrame) {
+    const animateProjectLogos = (time) => {
+      projectLogoMarkers.forEach((item) => {
+        if (item.hidden) return;
+
+        const speed = Math.max(0, Number(item.settings.speed) || 0);
+        const scale = Math.max(0.01, Number(item.settings.scale) || 1);
+        const bounce = Math.max(0, Number(item.settings.bounce) || 0);
+        const offsetX = Number(item.settings.offsetX) || 0;
+        const offsetY = Number(item.settings.offsetY) || 0;
+
+        // Smooth up/down motion. At 0 speed the logo stays still.
+        const wave = speed > 0
+          ? (Math.sin((time / 1000) * Math.PI * 2 * speed + item.phase) + 1) / 2
+          : 0;
+
+        const lift = wave * bounce;
+
+        item.img.style.left = `${offsetX}px`;
+        item.img.style.top = `${-item.img.offsetHeight + offsetY - lift}px`;
+        item.img.style.transform = `translateX(-50%) scale(${scale})`;
+      });
+
+      projectLogoAnimationFrame = requestAnimationFrame(animateProjectLogos);
+    };
+
+    projectLogoAnimationFrame = requestAnimationFrame(animateProjectLogos);
+  }
+}
+
+
 function showNearbyRoad(project) {
 
   const coords = project.coords;
@@ -885,7 +1023,25 @@ function getCameraSettings() {
 }
 
 // ── CAMERA MOVE ──────────────────────────────────────────────
+function hideProjectLogo(index) {
+  const item = projectLogoMarkers.find((logo) => logo.index === index);
+  if (!item) return;
+
+  item.hidden = true;
+  item.root.style.display = "none";
+}
+
+function showProjectLogos() {
+  projectLogoMarkers.forEach((item) => {
+    item.hidden = false;
+    item.root.style.display = "block";
+  });
+}
+
 function focusProject(index) {
+  // Hide the bouncing logo as soon as this project point is clicked.
+  hideProjectLogo(index);
+
 
   const project = projects[index];
   currentProject = project;
