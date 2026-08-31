@@ -21,7 +21,7 @@ const LOCATION_CONFIGS = {
         coords: [75.786169, 30.8300446],
         modelUrl: "model.glb",
 
-        url: "../IPX/index.html",
+        url: "IPX/index.html",
 
         transform: {
           position: [0, -100, -50],
