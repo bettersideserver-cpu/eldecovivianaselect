@@ -2,7 +2,7 @@ import { supabase } from './supabase.js';
 const $=id=>document.getElementById(id);let units=[],statuses=[];
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
 async function guard(){const {data:{session}}=await supabase.auth.getSession();if(!session){location.href='login.html';return false}const {data:a,error}=await supabase.from('admin_users').select('user_id').eq('user_id',session.user.id).maybeSingle();if(error||!a){await supabase.auth.signOut();location.href='login.html';return false}return true}
-async function load(){[statuses,units]=await Promise.all([supabase.from('status_categories').select('*').eq('active',true).order('sort_order').then(r=>{if(r.error)throw r.error;return r.data}),supabase.from('units').select('*').order('unit_number').then(r=>{if(r.error)throw r.error;return r.data})]);renderUnits();renderStatuses();renderMetrics();loadVisitors()}
+async function load(){[statuses,units]=await Promise.all([supabase.from('status_categories').select('*').eq('active',true).order('sort_order').then(r=>{if(r.error)throw r.error;return r.data}),supabase.from('units').select('*').order('unit_number').then(r=>{if(r.error)throw r.error;return r.data})]);renderUnits();renderStatuses();renderMetrics();loadVisitors();loadHoldRequests()}
 function renderMetrics(){const available=statuses.find(s=>s.name.toLowerCase()==='available');$('mTotal').textContent=units.length;$('mAvailable').textContent=available?units.filter(u=>u.status_id===available.id).length:0;$('mOther').textContent=units.length-(+$('mAvailable').textContent)}
 function renderUnits(){const map=new Map(statuses.map(s=>[s.id,s]));$('unitRows').innerHTML=units.map(u=>`<tr><td>${esc(u.unit_number)}</td><td><select data-id="${u.id}" class="ustatus">${statuses.map(s=>`<option value="${s.id}" ${s.id===u.status_id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></td><td><input data-id="${u.id}" class="buyerName" value="${escAttr(u.buyer_name||'')}" placeholder="Buyer name"></td><td><input data-id="${u.id}" class="buyerNumber" value="${escAttr(u.buyer_number||'')}" placeholder="Buyer number"></td><td><button class="save small-btn" data-save="${u.id}">Save</button></td></tr>`).join('');}
 $('unitRows').onclick=async e=>{const b=e.target.closest('[data-save]');if(!b)return;const id=Number(b.dataset.save);const row=units.find(u=>u.id===id);const statusId=Number(document.querySelector(`.ustatus[data-id="${id}"]`).value);const name=document.querySelector(`.buyerName[data-id="${id}"]`).value.trim();const num=document.querySelector(`.buyerNumber[data-id="${id}"]`).value.trim();const {error}=await supabase.from('units').update({status_id:statusId,buyer_name:name,buyer_number:num,updated_at:new Date().toISOString()}).eq('id',id);if(error){toast(error.message);return}row.status_id=statusId;row.buyer_name=name;row.buyer_number=num;toast(`Plot ${row.unit_number} saved`);renderMetrics()}
@@ -10,6 +10,28 @@ function renderStatuses(){ $('statusList').innerHTML=statuses.map(s=>`<div class
 $('statusForm').onsubmit=async e=>{e.preventDefault();const name=$('statusName').value.trim(),color=$('statusColor').value;const {error}=await supabase.from('status_categories').insert({name,color,active:true,sort_order:statuses.length});if(error){toast(error.message);return}$('statusName').value='';await load();toast('Status added')}
 $('statusList').onclick=async e=>{const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-delete]');if(edit){const id=Number(edit.dataset.edit),name=document.querySelector(`.sname[data-id="${id}"]`).value.trim(),color=document.querySelector(`.scolor[data-id="${id}"]`).value;const {error}=await supabase.from('status_categories').update({name,color}).eq('id',id);if(error)toast(error.message);else{await load();toast('Status updated')}} if(del){const id=Number(del.dataset.delete);const s=statuses.find(x=>x.id===id);if(!s)return;if(!confirm(`Delete "${s.name}"? Any units using it will automatically become Available.`))return;const {error}=await supabase.rpc('delete_plot_status',{p_status_id:id});if(error){toast(error.message);return}await load();toast('Status deleted; affected units set to Available')}}
 async function loadVisitors(){const {data,error}=await supabase.from('visitors').select('*').order('created_at',{ascending:false});if(error){$('visitorRows').innerHTML=`<tr><td colspan="5">${esc(error.message)}</td></tr>`;return}$('visitorRows').innerHTML=(data||[]).map(v=>`<tr><td>${esc(v.name)}</td><td>${esc(v.mobile||v.phone)}</td><td>${esc(v.email||'')}</td><td>${esc(v.city||'')}</td><td>${new Date(v.created_at).toLocaleString()}</td></tr>`).join('')||'<tr><td colspan="5">No visitors yet.</td></tr>'}
+async function loadHoldRequests(){
+  const {data,error}=await supabase.from('hold_requests').select('*').order('created_at',{ascending:false});
+  if(error){ $('holdRequestRows').innerHTML=`<tr><td colspan="8">${esc(error.message)}</td></tr>`; return; }
+  $('holdRequestRows').innerHTML=(data||[]).map(r=>`<tr>
+    <td>${esc(r.property_name||('Plot '+(r.unit_number||'')))}</td>
+    <td>${esc(r.visitor_name||'')}</td>
+    <td>${esc(r.visitor_mobile||'')}</td>
+    <td>${esc(r.visitor_email||'')}</td>
+    <td>${esc(r.visitor_city||'')}</td>
+    <td><select class="hold-status" data-id="${r.id}"><option value="pending" ${r.status==='pending'?'selected':''}>Pending</option><option value="approved" ${r.status==='approved'?'selected':''}>Approved</option><option value="rejected" ${r.status==='rejected'?'selected':''}>Rejected</option></select></td>
+    <td>${r.created_at?new Date(r.created_at).toLocaleString():''}</td>
+    <td><button class="small-btn" data-hold-save="${r.id}">Save</button></td>
+  </tr>`).join('')||'<tr><td colspan="8">No hold requests yet.</td></tr>';
+}
+$('holdRequestRows').onclick=async e=>{
+  const b=e.target.closest('[data-hold-save]'); if(!b)return;
+  const id=Number(b.dataset.holdSave);
+  const status=document.querySelector(`.hold-status[data-id="${id}"]`).value;
+  const {error}=await supabase.from('hold_requests').update({status,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast(error.message);return;} toast('Hold request updated');
+};
+
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function escAttr(v){return esc(v)}function safeColor(c){return /^#[0-9a-f]{6}$/i.test(c||'')?c:'#22c55e'}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(b.dataset.page).classList.add('active');if(b.dataset.page==='visitors')loadVisitors()});$('logout').onclick=async()=>{await supabase.auth.signOut();location.href='login.html'};
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(b.dataset.page).classList.add('active');if(b.dataset.page==='visitors')loadVisitors();if(b.dataset.page==='holdRequests')loadHoldRequests()});$('logout').onclick=async()=>{await supabase.auth.signOut();location.href='login.html'};
 (async()=>{if(await guard())await load()})()

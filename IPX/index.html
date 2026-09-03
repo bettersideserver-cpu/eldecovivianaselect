@@ -11,9 +11,14 @@
     /* =====================================
        RESET
     ===================================== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -50,7 +55,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width:  max(100vw, calc(var(--vh, 1vh) * 100 * (var(--plan-w) / var(--plan-h))));
+      width: max(100vw, calc(var(--vh, 1vh) * 100 * (var(--plan-w) / var(--plan-h))));
       height: max(calc(var(--vh, 1vh) * 100), calc(100vw * (var(--plan-h) / var(--plan-w))));
     }
 
@@ -67,12 +72,15 @@
     }
 
     #floorImage {
-      object-fit: fill;              /* stage already matches image ratio */
+      object-fit: fill;
+      /* stage already matches image ratio */
       user-select: none;
       pointer-events: none;
     }
 
-    #floorSVG { z-index: 10; }
+    #floorSVG {
+      z-index: 10;
+    }
 
     /* =====================================
        CLICKABLE UNITS
@@ -93,7 +101,9 @@
     }
 
     #floorSVG .unit:active,
-    #floorSVG .unit.active { fill: rgba(255, 215, 0, .6); }
+    #floorSVG .unit.active {
+      fill: rgba(255, 215, 0, .6);
+    }
 
     /* =====================================
        CHROME
@@ -107,7 +117,8 @@
     ===================================== */
     header {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       z-index: 120;
       padding: 0 !important;
@@ -118,11 +129,18 @@
       pointer-events: none;
     }
 
-    header h1 { display: none !important; }
+    header h1 {
+      display: none !important;
+    }
 
     /* no legend items -> no header box at all */
-    header:has(#legend:empty) { display: none; }
-    #legend:empty { display: none; }
+    header:has(#legend:empty) {
+      display: none;
+    }
+
+    #legend:empty {
+      display: none;
+    }
 
     #legend {
       display: flex;
@@ -134,7 +152,8 @@
 
     .back-btn {
       position: fixed;
-      top: 20px; left: 20px;
+      top: 20px;
+      left: 20px;
       padding: 10px 20px;
       background: #fff;
       color: #000;
@@ -146,7 +165,8 @@
 
     #timer {
       position: fixed;
-      top: 20px; right: 20px;
+      top: 20px;
+      right: 20px;
       z-index: 130;
       padding: 6px 12px;
       border-radius: 8px;
@@ -172,33 +192,61 @@
       max-width: 60vw;
     }
 
-    #tooltip.show { opacity: 1; }
+    #tooltip.show {
+      opacity: 1;
+    }
+
     #tooltip {
       z-index: 999999 !important;
       pointer-events: none !important;
       min-width: 190px;
       padding: 12px 14px;
-      border: 1px solid rgba(255,255,255,.16);
+      border: 1px solid rgba(255, 255, 255, .16);
       border-radius: 12px;
-      background: rgba(15,15,15,.94);
-      box-shadow: 0 12px 35px rgba(0,0,0,.35);
+      background: rgba(15, 15, 15, .94);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
       backdrop-filter: blur(10px);
     }
+
     #tooltip .unit-tip-title {
-      font-size: 14px; font-weight: 800; margin-bottom: 8px;
-      padding-bottom: 7px; border-bottom: 1px solid rgba(255,255,255,.14);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(255, 255, 255, .14);
     }
-    #tooltip .unit-tip-row { display:flex; justify-content:space-between; gap:20px; margin:5px 0; font-size:12px; }
-    #tooltip .unit-tip-row span { opacity:.68; }
-    #tooltip .unit-tip-row b { font-weight:700; text-align:right; }
-    #tooltip .unit-tip-status { color:#FFD700; }
+
+    #tooltip .unit-tip-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    #tooltip .unit-tip-row span {
+      opacity: .68;
+    }
+
+    #tooltip .unit-tip-row b {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    #tooltip .unit-tip-status {
+      color: #FFD700;
+    }
 
 
     /* =====================================
        MOBILE LANDSCAPE
     ===================================== */
     @media (orientation: landscape) and (max-height: 500px) {
-      #floorNav, .floor-nav, #floorSelector, .floor-switcher {
+
+      #floorNav,
+      .floor-nav,
+      #floorSelector,
+      .floor-switcher {
         position: fixed !important;
         top: 50% !important;
         right: 6px !important;
@@ -208,12 +256,31 @@
         z-index: 200 !important;
       }
 
-      .back-btn { top: 8px; left: 8px; padding: 7px 12px; font-size: 11px; }
-      #timer { top: 8px; right: 8px; padding: 5px 10px; font-size: 12px; }
+      .back-btn {
+        top: 8px;
+        left: 8px;
+        padding: 7px 12px;
+        font-size: 11px;
+      }
+
+      #timer {
+        top: 8px;
+        right: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+
       #tooltip {
-      z-index: 999999 !important;
-      pointer-events: none !important; padding: 7px 10px; font-size: 11px; max-width: 55vw; }
-      #floorSVG .unit { stroke-width: 5; }
+        z-index: 999999 !important;
+        pointer-events: none !important;
+        padding: 7px 10px;
+        font-size: 11px;
+        max-width: 55vw;
+      }
+
+      #floorSVG .unit {
+        stroke-width: 5;
+      }
     }
 
     /* =====================================
@@ -229,13 +296,16 @@
     ===================================== */
     @media (max-width: 768px) and (orientation: portrait) {
       .floor-stage {
-        width:  max(calc(var(--vh, 1vh) * 100), calc(100vw * (var(--plan-w) / var(--plan-h))));
+        width: max(calc(var(--vh, 1vh) * 100), calc(100vw * (var(--plan-w) / var(--plan-h))));
         height: max(100vw, calc(var(--vh, 1vh) * 100 * (var(--plan-h) / var(--plan-w))));
         transform: translate(-50%, -50%) rotate(90deg);
         transform-origin: center center;
       }
 
-      #floorNav, .floor-nav, #floorSelector, .floor-switcher {
+      #floorNav,
+      .floor-nav,
+      #floorSelector,
+      .floor-switcher {
         position: fixed !important;
         top: auto !important;
         bottom: 20px !important;
@@ -245,12 +315,29 @@
         z-index: 200 !important;
       }
 
-      .back-btn { top: 8px; left: 8px; padding: 7px 13px; font-size: 12px; }
-      #timer { top: 8px; right: 8px; font-size: 12px; }
+      .back-btn {
+        top: 8px;
+        left: 8px;
+        padding: 7px 13px;
+        font-size: 12px;
+      }
+
+      #timer {
+        top: 8px;
+        right: 8px;
+        font-size: 12px;
+      }
+
       #tooltip {
-      z-index: 999999 !important;
-      pointer-events: none !important; font-size: 11px; max-width: 80vw; }
-      #floorSVG .unit { stroke-width: 4; }
+        z-index: 999999 !important;
+        pointer-events: none !important;
+        font-size: 11px;
+        max-width: 80vw;
+      }
+
+      #floorSVG .unit {
+        stroke-width: 4;
+      }
     }
 
     /* =====================================
@@ -266,7 +353,10 @@
       -webkit-backdrop-filter: blur(6px);
     }
 
-    #planModal.open { display: flex; flex-direction: column; }
+    #planModal.open {
+      display: flex;
+      flex-direction: column;
+    }
 
     .planModal-bar {
       flex: 0 0 auto;
@@ -334,12 +424,33 @@
     }
 
     @media (max-width: 768px) {
-      .planModal-bar { padding: 10px 12px; gap: 10px; flex-wrap: wrap; }
-      .planModal-title { font-size: 14px; }
-      .planModal-meta { font-size: 11px; }
-      .planModal-meta span { padding: 4px 8px; }
-      #planModalClose { width: 34px; height: 34px; font-size: 17px; }
-      .planModal-body { padding: 0 10px 10px; }
+      .planModal-bar {
+        padding: 10px 12px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .planModal-title {
+        font-size: 14px;
+      }
+
+      .planModal-meta {
+        font-size: 11px;
+      }
+
+      .planModal-meta span {
+        padding: 4px 8px;
+      }
+
+      #planModalClose {
+        width: 34px;
+        height: 34px;
+        font-size: 17px;
+      }
+
+      .planModal-body {
+        padding: 0 10px 10px;
+      }
     }
 
     /* =====================================
@@ -353,8 +464,10 @@
     ===================================== */
     @media (min-width: 769px) {
       #planModalImg {
-        max-width: 80vh;    /* becomes screen HEIGHT after rotate */
-        max-height: 80vw;   /* becomes screen WIDTH  after rotate */
+        max-width: 80vh;
+        /* becomes screen HEIGHT after rotate */
+        max-height: 80vw;
+        /* becomes screen WIDTH  after rotate */
         transform: rotate(90deg);
       }
     }
@@ -410,22 +523,174 @@
       color: #111;
     }
 
-    .roomBtn.active small { opacity: .75; }
+    .roomBtn.active small {
+      opacity: .75;
+    }
 
     @media (max-width: 768px) {
-      .planModal-rooms { gap: 6px; padding: 0 10px 10px; }
-      .roomBtn { padding: 6px 10px; font-size: 11px; border-radius: 8px; }
-      .roomBtn small { font-size: 9px; }
+      .planModal-rooms {
+        gap: 6px;
+        padding: 0 10px 10px;
+      }
+
+      .roomBtn {
+        padding: 6px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+      }
+
+      .roomBtn small {
+        font-size: 9px;
+      }
     }
 
     /* popups */
     #popupContainer .card,
-    #popupContainer .overlay > div,
+    #popupContainer .overlay>div,
     .card {
       width: min(420px, 92vw);
       max-height: 88vh;
       overflow-y: auto;
       padding: 16px 18px;
+    }
+
+    /* Request to Hold */
+    #requestHoldBtn {
+      flex: 0 0 auto;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      background: #FFD700;
+      color: #111;
+      font: 800 13px Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .22);
+    }
+
+    #requestHoldBtn:hover {
+      transform: translateY(-1px);
+    }
+
+    #requestHoldBtn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #holdConfirmOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .58);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    #holdConfirmOverlay.open {
+      display: flex;
+    }
+
+    .hold-confirm-card {
+      width: min(430px, 90vw);
+      background: #fff;
+      color: #111;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, .35);
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .hold-confirm-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .hold-confirm-card p {
+      margin: 0 0 20px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .hold-confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .hold-confirm-actions button {
+      min-width: 100px;
+      padding: 11px 18px;
+      border-radius: 9px;
+      border: 1px solid #ddd;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #holdYesBtn {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    #holdNoBtn {
+      background: #fff;
+      color: #111;
+    }
+
+    #holdConfirmMsg {
+      min-height: 18px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #b42318;
+    }
+
+    @media(max-width:768px) {
+      #requestHoldBtn {
+        padding: 8px 11px;
+        font-size: 11px;
+      }
+
+      .hold-confirm-card {
+        padding: 20px;
+      }
+    }
+
+    /* Availability toggle */
+    #availabilityToggle {
+      position: fixed;
+      top: 20px;
+      left: 140px;
+      z-index: 130;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      background: #fff;
+      color: #111;
+      font: 700 13px Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .22)
+    }
+
+    #availabilityToggle.off {
+      background: rgba(0, 0, 0, .72);
+      color: #fff
+    }
+
+    #legend.availability-hidden {
+      display: none !important
+    }
+
+    @media(max-width:768px) {
+      #availabilityToggle {
+        top: 8px;
+        left: 105px;
+        padding: 7px 11px;
+        font-size: 11px
+      }
     }
   </style>
 </head>
@@ -438,6 +703,7 @@
   </header>
 
   <div id="timer">00:00</div>
+  <button id="availabilityToggle" type="button" aria-pressed="true">Availability ON</button>
   <div id="tooltip"></div>
 
   <div class="floor-container">
@@ -447,65 +713,88 @@
       <img src="Top-Render-4k.png" id="floorImage" alt="Floor Plan">
 
       <!-- SVG overlay -->
-      <svg id="floorSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160"
-        preserveAspectRatio="none">
+      <svg id="floorSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 4609" preserveAspectRatio="none">
 
-      <path id="130" class="unit" data-unit="130" d="M3248.33 1555.44v295.11h44.44v-295.11z" />
-      <path id="131" class="unit" data-unit="131" d="M3161 1555.44v295.11h85.33v-295.11z" />
-      <path id="132" class="unit" data-unit="132" d="M3072.44 1555.44v295.11h85.33v-295.11z" />
-      <path id="133" class="unit" data-unit="133" d="M2982.89 1555.44v295.11h85.33v-295.11z" />
-      <path id="134" class="unit" data-unit="134" d="M2892.53 1554.44v295.11h85.33v-295.11z" />
-      <path id="135" class="unit" data-unit="135" d="M2802.86 1554.44v295.11h85.33v-295.11z" />
-      <path id="136" class="unit" data-unit="136" d="M2713.2 1554.44v295.11h85.33v-295.11z" />
-      <path id="137" class="unit" data-unit="137" d="M2622.53 1554.44v295.11h85.33v-295.11z" />
-      <path id="186" class="unit" data-unit="186" d="m3200.93 1140.63-.89 285.78h84.89l2.66-285.78z" />
-      <path id="185" class="unit" data-unit="185" d="m3110.7 1140.63-.89 285.78h84.89l2.67-285.78z" />
-      <path id="184" class="unit" data-unit="184" d="m3020.48 1140.63-.89 285.78h84.89l2.67-285.78z" />
-      <path id="183" class="unit" data-unit="183" d="m2930.26 1140.63-.89 285.78h84.89l2.67-285.78z" />
-      <path id="182" class="unit" data-unit="182" d="m2840.04 1140.63-.89 285.78h84.89l2.66-285.78z" />
-      <path id="181" class="unit" data-unit="181" d="m2749.81 1140.63-.88 285.78h84.88l2.67-285.78z" />
-      <path id="138" class="unit" data-unit="138" d="M2173.52 1553.67h77.63v280.89h-77.63z" />
-      <path id="139" class="unit" data-unit="139" d="M2088.78 1553.67h77.63v280.89h-77.63z" />
-      <path id="140" class="unit" data-unit="140" d="M2004.04 1553.67h77.63v280.89h-77.63z" />
-      <path id="141" class="unit" data-unit="141" d="M1919.3 1553.67h77.63v280.89h-77.63z" />
-      <path id="142" class="unit" data-unit="142" d="M1834.56 1553.67h77.63v280.89h-77.63z" />
-      <path id="143" class="unit" data-unit="143" d="M1749.81 1553.67h77.63v280.89h-77.63z" />
-      <path id="144" class="unit" data-unit="144" d="M1665.07 1553.67h77.63v280.89h-77.63z" />
-      <path id="180" class="unit" data-unit="180" d="m2216.19 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="179" class="unit" data-unit="179" d="m2127.3 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="178" class="unit" data-unit="178" d="m2038.56 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="177" class="unit" data-unit="177" d="m1951.81 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="176" class="unit" data-unit="176" d="m1864.07 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="175" class="unit" data-unit="175" d="m1775.89 1134.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="174" class="unit" data-unit="174" d="m1689.59 1133.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="173" class="unit" data-unit="173" d="m1603.41 1132.85-1.48 290.67h83.56l1.63-290.19s-84.31-1.09-83.7-.48Z" />
-      <path id="170" class="unit" data-unit="170" d="m1822.26 846.89-1.78 278.22h96.45V846.89z" />
-      <path id="171" class="unit" data-unit="171" d="m1717.96 846.89-1.77 278.22h96.44V846.89z" />
-      <path id="172" class="unit" data-unit="172" d="m1610.7 846.89-1.77 278.22h96.44V846.89z" />
-      <path id="169" class="unit" data-unit="169" d="m1825.37 421.56-1.78 296h86.67v-296z" />
-      <path id="168" class="unit" data-unit="168" d="m1715.59 421.56-2.66 296h105.33l1.78-296z" />
-      <path id="167" class="unit" data-unit="167" d="m1710.26 421.56-3.56 296h-92.44s9.33-34.67-10.67-35.11l-2.22-30.22s21.78-32.44 0-41.33v-28.89s26.22-22.22 1.78-43.56l-1.78-35.11s29.78-26.67 2.22-46.67l-2.22-24.44s11.11-5.78 10.22-10.67z" />
-      <path id="146" class="unit" data-unit="146" d="m1400.48 842.89-2.22 273.33h90.22V842.89z" />
-      <path id="147" class="unit" data-unit="147" d="m1305.81 842.89-2.22 273.33h90.22V842.89z" />
-      <path id="148" class="unit" data-unit="148" d="m1211.15 842.89-2.22 273.33h90.22V842.89z" />
-      <path id="149" class="unit" data-unit="149" d="m1113.81 842.89-2.22 273.33h90.22V842.89z" />
-      <path id="150" class="unit" data-unit="150" d="m1016.48 841.89-2.22 273.33h90.22V841.89z" />
-      <path id="151" class="unit" data-unit="151" d="m921.81 841.89-2.22 273.33h90.22V841.89z" />
-      <path id="152" class="unit" data-unit="152" d="m827.15 841.89-2.22 273.33h90.22V841.89z" />
-      <path id="153" class="unit" data-unit="153" d="m729.37 840.89-2.22 273.33h90.22V840.89z" />
-      <path id="154" class="unit" data-unit="154" d="m633.7 838.89-2.22 273.33h90.22V838.89z" />
-      <path id="155" class="unit" data-unit="155" d="m537.81 838.89-2.22 273.33h90.22V838.89z" />
-      <path id="1671" class="unit" data-unit="1671" d="m444.04 839.89-2.23 273.33h90.23V839.89z" />
-      <path id="166" class="unit" data-unit="166" d="m1403.3 421.56-3.56 293.33h102.52l5.93-293.33z" />
-      <path id="165" class="unit" data-unit="165" d="m1313.15 418.59-.82 299.48h82.97l1.18-299.48z" />
-      <path id="164" class="unit" data-unit="164" d="m1223.07 418.59-.81 299.48h82.96l1.19-299.48z" />
-      <path id="163" class="unit" data-unit="163" d="m1133 417.59-.81 299.48h82.96l1.18-299.48z" />
-      <path id="162" class="unit" data-unit="162" d="m1042.93 417.59-.82 299.48h82.96l1.19-299.48z" />
-      <path id="161" class="unit" data-unit="161" d="m952.85 416.59-.81 299.48H1035l1.19-299.48z" />
-      <path id="160" class="unit" data-unit="160" d="m862.78 416.59-.82 299.48h82.97l1.18-299.48z" />
-      <path id="159" class="unit" data-unit="159" d="m772.7 416.59-.81 299.48h82.96l1.19-299.48z" />
-      <path id="158" class="unit" data-unit="158" d="m680.26 416.59-.82 299.48h82.97l1.18-299.48z" />
-      <path id="157" class="unit" data-unit="157" d="M582.56 416.59 578.41 712h96V416.59z" />
+        <path id="130" class="unit" data-unit="130" d="M6200.44 3479.67h124v-524h-126v107.77h38v326.67h-36z" />
+        <path id="131" class="unit" data-unit="131"
+          d="M6044.44 3479.67h156v-89.56h36v-326.67h-38v-107.77h-154.66v103.77h37.33v330.67h-36.67z" />
+        <path id="132" class="unit" data-unit="132"
+          d="M5889.78 3479.67h154.66v-89.56h36.67v-330.67h-37.33v-103.77h-152.67v105.11h33.33v330h-34.66z" />
+        <path id="133" class="unit" data-unit="133"
+          d="M5735.11 3479.67h154.67v-88.89h34.66v-330h-33.33v-105.11h-156.67v105.11h33.34v328.66h-32.67z" />
+        <path id="134" class="unit" data-unit="134"
+          d="M5579.11 3479.67h156v-90.23h32.67v-328.66h-33.34v-105.11h-156v103.11h29.34v331.33h-28.67z" />
+        <path id="135" class="unit" data-unit="135"
+          d="M5421.78 3479.67h157.33v-89.56h28.67v-331.33h-29.34v-103.11h-158.66v102.44h28.66v331.33h-26.66z" />
+        <path id="136" class="unit" data-unit="136"
+          d="M5264.33 3479.67h157.45v-90.23h26.66v-331.33h-28.66v-102.44h-158.45v100.22h29.23v332.44h-26.23z" />
+        <path id="137" class="unit" data-unit="137"
+          d="M5104.33 2955.67v524h160v-91.33h26.22V3055.9h-29.22v-100.22h-157Z" />
+        <path id="137" class="unit" data-unit="138" d="M4351.67 3478.67h148v-515.34l-161.34-2.66v92.66h13.34z" />
+        <path id="186" class="unit" data-unit="186"
+          d="M6300.44 2381.44v335.34h-34.66v58.66h-160.67v-62.66h38.67v-335.34h-36v-115.33h156v119.33z" />
+        <path id="185" class="unit" data-unit="185"
+          d="M6143.78 2377.44v335.34h-38.67v62.66h-154.67v-60.66h38v-337.34h-35.33v-115.33h154.67v115.33z" />
+        <path id="184" class="unit" data-unit="184"
+          d="M5988.44 2377.44v337.34h-38v60.66h-154v-64.66h38.67v-333.34h-38.67v-115.33h156.67v115.33z" />
+        <path id="183" class="unit" data-unit="183"
+          d="M5835.11 2377.44v333.34h-38.67v64.66h-156v-64h35.34v-338h-33.34v-111.33h154v115.33z" />
+        <path id="182" class="unit" data-unit="182"
+          d="M5675.78 2373.44v338h-35.34v64h-160.66v-63.33h36.66v-338.67h-34v-111.33h160v111.33z" />
+        <path id="181" class="unit" data-unit="181"
+          d="M5516.44 2373.44v338.67h-36.66v63.33h-152v-513.33h154.66v111.33z" />
+        <path id="139" class="unit" data-unit="139"
+          d="M4207 3478.67h144.67v-425.34h-13.34v-92.66l-149.33 2.66V3056h18z" />
+        <path id="140" class="unit" data-unit="140" d="M4060.33 3478.67H4207V3056h-18v-92.67h-145.55v89.34h16.88z" />
+        <path id="141" class="unit" data-unit="141" d="M3909.67 3478.67h150.66v-426h-16.88v-89.34h-147.12v88h13.34z" />
+        <path id="142" class="unit" data-unit="142" d="M3760.33 3478.67h149.34v-427.34h-13.34v-88h-146v89.34h10z" />
+        <path id="143" class="unit" data-unit="143" d="M3613.67 3478.67h146.66v-426h-10v-89.34H3603v86h10.67z" />
+        <path id="144" class="unit" data-unit="144" d="M3448.33 2963.33v515.34h165.34v-429.34H3603v-86z" />
+        <path id="144" class="unit" data-unit="145" d="M2872.33 2550.11v213.78h303.56v-212z" />
+        <path id="180" class="unit" data-unit="180"
+          d="M4584.11 2372.78v332h-24v84.66h-142l-12.01.27v-85.6h28.01v-333.33h-28.01v-108.45h154.01v110.45z" />
+        <path id="179" class="unit" data-unit="179"
+          d="M4434.11 2370.78v333.33h-28.01v85.6l-138.66 3.07h-8.66v-89.34h21.33v-336h-25.33v-105.11h151.32v108.45z" />
+        <path id="178" class="unit" data-unit="178"
+          d="M4280.11 2367.44v336h-21.33v89.34h-154.67v-87.34h28v-334.66h-28v-108.45h150.67v105.11z" />
+        <path id="177" class="unit" data-unit="177"
+          d="M4132.11 2370.78v334.66h-28v87.34h-149.33v-88.67h22.66v-337.33h-22.66v-104.45h149.33v108.45z" />
+        <path id="176" class="unit" data-unit="176"
+          d="M3977.44 2366.78v337.33h-22.66v88.67h-150v-90h20v-332.67h-20v-107.78h150v104.45z" />
+        <path id="175" class="unit" data-unit="175" d="M3824.78 2370.11v332.67h-20v90h-141.34v-530.45h141.34v107.78z" />
+        <path id="174" class="unit" data-unit="174" d="M3509.44 2262.33h154v530.45h-154z" />
+        <path id="173" class="unit" data-unit="173" d="M3349.44 2262.33h160v530.45h-160z" />
+        <path id="170" class="unit" data-unit="170"
+          d="M3719.22 2262.33h177v-496.37s-179.52-2.52-177 0 0 496.37 0 496.37" />
+        <path id="171" class="unit" data-unit="171" d="M3539.22 1765.96h180v496.37h-180z" />
+        <path id="172" class="unit" data-unit="172" d="M3358.56 1765.96v496.37h180.67v-496.37s-181.15.48-180.67 0" />
+        <path id="169" class="unit" data-unit="169" d="M3723.22 1032.33h173v520h-173z" />
+        <path id="168" class="unit" data-unit="168" d="M3539.22 1032.33h184v520h-184z" />
+        <path id="167" class="unit" data-unit="1617"
+          d="m1710.26 421.56-3.56 296h-92.44s9.33-34.67-10.67-35.11l-2.22-30.22s21.78-32.44 0-41.33v-28.89s26.22-22.22 1.78-43.56l-1.78-35.11s29.78-26.67 2.22-46.67l-2.22-24.44s11.11-5.78 10.22-10.67z" />
+        <path id="146" class="unit" data-unit="146" d="M2989.56 1765.96h164.67V2251h-164.67z" />
+        <path id="147" class="unit" data-unit="147" d="M2827.56 1765.96h162V2251h-162z" />
+        <path id="148" class="unit" data-unit="148" d="M2664.22 1765.96h163.33V2251h-163.33z" />
+        <path id="149" class="unit" data-unit="149" d="M2500.22 1765.96h164V2251h-164z" />
+        <path id="150" class="unit" data-unit="150" d="M2332.22 1765.96h168V2251h-168z" />
+        <path id="151" class="unit" data-unit="151" d="M2163.56 1765.96h168.67V2251h-168.67z" />
+        <path id="152" class="unit" data-unit="152" d="M2000.22 1765.96h163.33V2251h-163.33z" />
+        <path id="153" class="unit" data-unit="153" d="M1834.22 1765.96h166V2251h-166z" />
+        <path id="154" class="unit" data-unit="154" d="M1671.56 1765.96h162.67V2251h-162.67z" />
+        <path id="155" class="unit" data-unit="155" d="M1506.89 1765.96h164.67V2251h-164.67z" />
+        <path id="167" class="unit" data-unit="167" d="M3370.22 1032.33h169v520h-169z" />
+        <path id="166" class="unit" data-unit="166"
+          d="M2998.33 1032.33h152l2.33 14.67s1.11 10 1.33 10.89 6.22 14 6.22 14v480.44h-161.89v-520Z" />
+        <path id="165" class="unit" data-unit="165" d="M2837.33 1032.33h161v520h-161z" />
+        <path id="164" class="unit" data-unit="164" d="M2682.33 1032.33h155v520h-155z" />
+        <path id="163" class="unit" data-unit="163" d="M2529.33 1032.33h153v520h-153z" />
+        <path id="162" class="unit" data-unit="162" d="M2371.33 1032.33h158v520h-158z" />
+        <path id="161" class="unit" data-unit="161" d="M2214.33 1032.33h157v520h-157z" />
+        <path id="160" class="unit" data-unit="160" d="M2057.33 1032.33h157v520h-157z" />
+        <path id="159" class="unit" data-unit="159" d="M1899.33 1032.33h158v520h-158z" />
+        <path id="158" class="unit" data-unit="158" d="M1740 1032.33h159.33v520H1740z" />
+        <path id="157" class="unit" data-unit="157" d="M1575.33 1032.33H1740v520h-164.67z" />
+        <path id="157" class="unit" data-unit="156" d="M1335.56 1767v484h171.33v-484s-173.67-2.33-171.33 0" />
 
       </svg>
 
@@ -539,6 +828,7 @@
       "142": { unit: "Plot 142", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
       "143": { unit: "Plot 143", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
       "144": { unit: "Plot 144", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
+      "145": { unit: "Plot 145", totalArea: "214.38 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
       "180": { unit: "Plot 180", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
       "179": { unit: "Plot 179", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
       "178": { unit: "Plot 178", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
@@ -585,7 +875,7 @@
       if (!svg || !tip) return;
 
       function esc(value) {
-        return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+        return String(value ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
       }
 
       function getUnit(target) {
@@ -606,12 +896,13 @@
         const number = unit.dataset.unit || unit.id || "—";
         const d = (window.unitDetails && (window.unitDetails[number] || window.unitDetails[unit.id])) || {};
         const status = unit.dataset.status || d.status || "Available";
+        const availabilityOn = document.getElementById("availabilityToggle")?.getAttribute("aria-pressed") !== "false";
         tip.innerHTML =
           '<div class="unit-tip-title">Unit ' + esc(number) + '</div>' +
           '<div class="unit-tip-row"><span>Length</span><b>' + esc(d.length || "—") + '</b></div>' +
           '<div class="unit-tip-row"><span>Width</span><b>' + esc(d.width || d.breadth || "—") + '</b></div>' +
           '<div class="unit-tip-row"><span>Area</span><b>' + esc(d.totalArea || d.area || "—") + '</b></div>' +
-          '<div class="unit-tip-row"><span>Status</span><b class="unit-tip-status">' + esc(status) + '</b></div>';
+          (availabilityOn ? '<div class="unit-tip-row"><span>Status</span><b class="unit-tip-status">' + esc(status) + '</b></div>' : '');
         tip.classList.add("show");
         tip.style.display = "block";
         tip.style.pointerEvents = "none";
@@ -648,6 +939,7 @@
     <div class="planModal-bar">
       <div class="planModal-title" id="planModalTitle">Plot</div>
       <div class="planModal-meta" id="planModalMeta"></div>
+      <button id="requestHoldBtn" type="button">Request to Hold</button>
       <button id="planModalClose" type="button" aria-label="Close">&times;</button>
     </div>
     <div class="planModal-body">
@@ -657,6 +949,18 @@
     <div class="planModal-rooms" id="planModalRooms"></div>
   </div>
 
+  <div id="holdConfirmOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="hold-confirm-card">
+      <h3>Request to Hold</h3>
+      <p id="holdConfirmText">Do you want to request this property to be held?</p>
+      <div class="hold-confirm-actions">
+        <button id="holdNoBtn" type="button">No</button>
+        <button id="holdYesBtn" type="button">Yes</button>
+      </div>
+      <div id="holdConfirmMsg"></div>
+    </div>
+  </div>
+
   <script>
     /* =====================================
        PLAN IMAGES
@@ -664,13 +968,13 @@
        drawing. Anything without an entry falls back to "default".
     ===================================== */
     window.planImages = {
-      "300":    "unit-plan.png",
-      "310":    "unit-plan.png",
-      "320":    "unit-plan.png",
-      "330":    "unit-plan.png",
-      "350":    "unit-plan.png",
+      "300": "unit-plan.png",
+      "310": "unit-plan.png",
+      "320": "unit-plan.png",
+      "330": "unit-plan.png",
+      "350": "unit-plan.png",
       "382.50": "unit-plan.png",
-      "400":    "unit-plan.png",
+      "400": "unit-plan.png",
       "default": "unit-plan.png"
     };
   </script>
@@ -680,12 +984,19 @@
        CLICK A UNIT -> SHOW ITS FLOOR PLAN
     ===================================== */
     (function () {
-      var svg   = document.getElementById("floorSVG");
+      var svg = document.getElementById("floorSVG");
       var modal = document.getElementById("planModal");
-      var img   = document.getElementById("planModalImg");
+      var img = document.getElementById("planModalImg");
       var title = document.getElementById("planModalTitle");
-      var meta  = document.getElementById("planModalMeta");
-      var tip   = document.getElementById("tooltip");
+      var meta = document.getElementById("planModalMeta");
+      var tip = document.getElementById("tooltip");
+      var requestHoldBtn = document.getElementById("requestHoldBtn");
+      var holdOverlay = document.getElementById("holdConfirmOverlay");
+      var holdText = document.getElementById("holdConfirmText");
+      var holdYesBtn = document.getElementById("holdYesBtn");
+      var holdNoBtn = document.getElementById("holdNoBtn");
+      var holdMsg = document.getElementById("holdConfirmMsg");
+      var selectedDetails = null;
 
       function planFor(details) {
         var size = String(details.totalArea || "").split(" ")[0].replace(/,/g, "");
@@ -693,6 +1004,7 @@
       }
 
       function open(details) {
+        selectedDetails = details;
         title.textContent = details.unit || "Plot";
         meta.innerHTML =
           "<span>Total Area: " + details.totalArea + "</span>" +
@@ -701,6 +1013,8 @@
 
         img.src = planFor(details);
         img.alt = (details.unit || "Unit") + " floor plan";
+        requestHoldBtn.disabled = false;
+        requestHoldBtn.textContent = "Request to Hold";
 
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
@@ -709,10 +1023,60 @@
       }
 
       function close() {
+        closeHoldConfirm();
         modal.classList.remove("open");
         modal.setAttribute("aria-hidden", "true");
         img.src = "";
       }
+
+      function closeHoldConfirm() {
+        holdOverlay.classList.remove("open");
+        holdOverlay.setAttribute("aria-hidden", "true");
+        holdMsg.textContent = "";
+        holdYesBtn.disabled = false;
+        holdNoBtn.disabled = false;
+      }
+
+      requestHoldBtn.addEventListener("click", function () {
+        if (!selectedDetails) return;
+        holdText.textContent = "Do you want to request " + (selectedDetails.unit || "this property") + " to be held?";
+        holdMsg.textContent = "";
+        holdOverlay.classList.add("open");
+        holdOverlay.setAttribute("aria-hidden", "false");
+      });
+
+      holdNoBtn.addEventListener("click", closeHoldConfirm);
+      holdOverlay.addEventListener("click", function (e) { if (e.target === holdOverlay) closeHoldConfirm(); });
+
+      holdYesBtn.addEventListener("click", async function () {
+        if (!selectedDetails) return;
+        holdYesBtn.disabled = true; holdNoBtn.disabled = true;
+        holdYesBtn.textContent = "Submitting..."; holdMsg.textContent = "";
+        try {
+          var visitor = {};
+          try { visitor = JSON.parse(sessionStorage.getItem("eldecoVisitor") || "{}"); } catch (_) { }
+          var unitNumber = String(selectedDetails.unit || "").replace(/^Plot\s*/i, "").trim();
+          var payload = {
+            unit_number: unitNumber,
+            property_name: selectedDetails.unit || ("Plot " + unitNumber),
+            visitor_name: visitor.name || null,
+            visitor_mobile: visitor.mobile || null,
+            visitor_email: visitor.email || null,
+            visitor_city: visitor.city || null,
+            status: "pending"
+          };
+          var result = await supabase.from("hold_requests").insert(payload);
+          if (result.error) throw result.error;
+          holdMsg.style.color = "#18794e"; holdMsg.textContent = "Request sent to admin successfully.";
+          holdYesBtn.textContent = "Sent";
+          setTimeout(closeHoldConfirm, 1200);
+        } catch (err) {
+          console.error("Hold request failed:", err);
+          holdMsg.style.color = "#b42318";
+          holdMsg.textContent = err.message || "Unable to send request. Please try again.";
+          holdYesBtn.disabled = false; holdNoBtn.disabled = false; holdYesBtn.textContent = "Yes";
+        }
+      });
 
       svg.addEventListener("click", function (e) {
         var unit = e.target.closest(".unit");
@@ -743,12 +1107,12 @@
        ROOMS - labels and sizes read off the plan drawing
     ===================================== */
     window.planRooms = [
-      { key: "living",   label: "Living & Dining", mm: "4835 x 6740", ft: "15'-10\½\" x 22'-0\"" },
-      { key: "kitchen",  label: "Kitchen",         mm: "3380 x 2680", ft: "11'-1\" x 8'-9\"" },
-      { key: "bed1",     label: "Master Bedroom",  mm: "3650 x 4390", ft: "12'-0\" x 14'-5\"" },
-      { key: "bed2",     label: "Bedroom 2",       mm: "3340 x 4200", ft: "11'-0\" x 14'-0\"" },
-      { key: "bed3",     label: "Bedroom 3",       mm: "3340 x 3060", ft: "11'-0\" x 10'-0\"" },
-      { key: "bed4",     label: "Bedroom 4",       mm: "3345 x 4060", ft: "11'-0\" x 13'-4\"" }
+      { key: "living", label: "Living & Dining", mm: "4835 x 6740", ft: "15'-10\½\" x 22'-0\"" },
+      { key: "kitchen", label: "Kitchen", mm: "3380 x 2680", ft: "11'-1\" x 8'-9\"" },
+      { key: "bed1", label: "Master Bedroom", mm: "3650 x 4390", ft: "12'-0\" x 14'-5\"" },
+      { key: "bed2", label: "Bedroom 2", mm: "3340 x 4200", ft: "11'-0\" x 14'-0\"" },
+      { key: "bed3", label: "Bedroom 3", mm: "3340 x 3060", ft: "11'-0\" x 10'-0\"" },
+      { key: "bed4", label: "Bedroom 4", mm: "3345 x 4060", ft: "11'-0\" x 13'-4\"" }
     ];
   </script>
 
@@ -773,7 +1137,7 @@
           var was = btn.classList.contains("active");
 
           wrap.querySelectorAll(".roomBtn.active")
-              .forEach(function (b) { b.classList.remove("active"); });
+            .forEach(function (b) { b.classList.remove("active"); });
 
           if (!was) btn.classList.add("active");
 
@@ -788,7 +1152,7 @@
       /* clear the selection whenever the modal is reopened */
       window.clearRoomSelection = function () {
         wrap.querySelectorAll(".roomBtn.active")
-            .forEach(function (b) { b.classList.remove("active"); });
+          .forEach(function (b) { b.classList.remove("active"); });
       };
     })();
   </script>
@@ -805,12 +1169,12 @@
 
       /* plan room key -> tour panorama key (matched on room dimensions) */
       var ROOM_TO_PANORAMA = {
-        living:  "lobby",     /* Living & Dining  15'-10 1/2" x 22'-0" */
+        living: "lobby",     /* Living & Dining  15'-10 1/2" x 22'-0" */
         kitchen: "kitchen",   /* Kitchen          11'-1"      x 8'-9"  */
-        bed1:    "dinning",   /* Master Bedroom   12'-0"      x 14'-5" */
-        bed2:    "room_3",    /* Bedroom 2        11'-0"      x 14'-0" */
-        bed3:    "room_2",    /* Bedroom 3        11'-0"      x 10'-0" */
-        bed4:    "room_1"     /* Bedroom 4        11'-0"      x 13'-4" */
+        bed1: "dinning",   /* Master Bedroom   12'-0"      x 14'-5" */
+        bed2: "room_3",    /* Bedroom 2        11'-0"      x 14'-0" */
+        bed3: "room_2",    /* Bedroom 3        11'-0"      x 10'-0" */
+        bed4: "room_1"     /* Bedroom 4        11'-0"      x 13'-4" */
       };
 
       /* the tour reads this for its balcony floor stack */
@@ -829,97 +1193,195 @@
   </script>
 
 
-<style>
-#eldeco-lock{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-#eldeco-lock.hidden{display:none}#eldeco-card{width:min(430px,92vw);background:#fff;color:#111;border-radius:16px;padding:26px;box-shadow:0 25px 80px #0008;font-family:Arial,sans-serif}#eldeco-card h2{margin:0 0 8px}#eldeco-card p{color:#666;margin:0 0 18px}#eldeco-card input{width:100%;padding:12px;margin:0 0 10px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}#eldeco-card button{width:100%;padding:12px;border:0;border-radius:8px;background:#111;color:#fff;font-weight:700;cursor:pointer}#eldeco-card .err{color:#b42318;font-size:13px;min-height:18px;margin:8px 0}.unit-live{transition:fill .15s,stroke .15s,filter .15s}.unit-live:hover{filter:brightness(1.3) drop-shadow(0 0 8px rgba(255,215,0,.8))}
-</style>
-<div id="eldeco-lock"><div id="eldeco-card"><h2>Visitor Registration</h2><p>Please enter your details to access the property.</p><form id="eldecoVisitorForm"><input id="evName" placeholder="Name" required maxlength="120"><input id="evMobile" placeholder="Mobile number" inputmode="numeric" required><input id="evEmail" type="email" placeholder="Email (optional)"><input id="evCity" placeholder="City"><div id="evErr" class="err"></div><button id="evSubmit">Enter Website</button></form></div></div>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/+esm';
-const SUPABASE_URL = 'https://jpiudwptxzzgtgxtbnsa.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_fJcnKZol-Xh_mSD9CORA5A_epWa097V';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const lock = document.getElementById('eldeco-lock');
-const form = document.getElementById('eldecoVisitorForm');
-const err = document.getElementById('evErr');
-const evName = document.getElementById('evName');
-const evMobile = document.getElementById('evMobile');
-const evEmail = document.getElementById('evEmail');
-const evCity = document.getElementById('evCity');
-const evSubmit = document.getElementById('evSubmit');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  err.textContent = '';
-  const name = evName.value.trim();
-  const mobile = evMobile.value.replace(/\D/g, '');
-  const email = evEmail.value.trim() || null;
-  const city = evCity.value.trim() || null;
-  if (!name) { err.textContent = 'Please enter your name.'; return; }
-  if (mobile.length < 10 || mobile.length > 15) { err.textContent = 'Enter a valid mobile number.'; return; }
-  evSubmit.disabled = true;
-  evSubmit.textContent = 'Entering...';
-  const { error } = await supabase.from('visitors').insert({ name, mobile, email, city, source: 'eldeco-ipx' });
-  if (error) {
-    console.error('Visitor registration failed:', error);
-    err.textContent = error.message || 'Unable to register. Please try again.';
-    evSubmit.disabled = false;
-    evSubmit.textContent = 'Enter Website';
-    return;
-  }
-  lock.classList.add('hidden');
-  document.body.classList.add('eldeco-unlocked');
-});
-
-async function applyInventory() {
-  const [unitsResult, statusesResult] = await Promise.all([
-    supabase.from('units').select('unit_number,svg_id,status_id,buyer_name,buyer_number'),
-    supabase.from('status_categories').select('id,name,color').eq('active', true).order('sort_order')
-  ]);
-  if (unitsResult.error || statusesResult.error) {
-    console.warn('Eldeco inventory load failed', unitsResult.error || statusesResult.error);
-    return;
-  }
-  const units = unitsResult.data || [];
-  const statuses = statusesResult.data || [];
-  const statusMap = new Map(statuses.map(s => [s.id, s]));
-  document.querySelectorAll('#floorSVG .unit').forEach(el => {
-    const unit = units.find(u => u.svg_id === el.id || u.unit_number === el.dataset.unit);
-    const status = unit ? statusMap.get(unit.status_id) : null;
-    el.classList.add('unit-live');
-    if (status) {
-      el.dataset.status = status.name;
-      el.style.fill = status.color;
-      el.style.fillOpacity = '.45';
-      el.style.stroke = status.color;
-      el.style.strokeOpacity = '.95';
-      el.dataset.buyer = unit.buyer_name || '';
-      el.dataset.buyerNumber = unit.buyer_number || '';
+  <style>
+    #eldeco-lock {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px)
     }
-  });
-}
 
-/* Bright hover outline while preserving each unit's live status color. */
-document.querySelectorAll('#floorSVG .unit').forEach(function (el) {
-  el.addEventListener('mouseenter', function () {
-    el.dataset.originalStrokeWidth = el.style.strokeWidth || '';
-    el.style.strokeWidth = '7';
-    el.style.filter = 'brightness(1.2) drop-shadow(0 0 7px rgba(255,215,0,.95)) drop-shadow(0 0 18px rgba(255,215,0,.65))';
-  });
-  el.addEventListener('mouseleave', function () {
-    el.style.strokeWidth = el.dataset.originalStrokeWidth || '';
-    el.style.filter = '';
-  });
-});
+    #eldeco-lock.hidden {
+      display: none
+    }
 
-applyInventory();
-supabase.channel('eldeco-live')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'units' }, applyInventory)
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'status_categories' }, applyInventory)
-  .subscribe();
-</script>
+    #eldeco-card {
+      width: min(430px, 92vw);
+      background: #fff;
+      color: #111;
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 25px 80px #0008;
+      font-family: Arial, sans-serif
+    }
+
+    #eldeco-card h2 {
+      margin: 0 0 8px
+    }
+
+    #eldeco-card p {
+      color: #666;
+      margin: 0 0 18px
+    }
+
+    #eldeco-card input {
+      width: 100%;
+      padding: 12px;
+      margin: 0 0 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box
+    }
+
+    #eldeco-card button {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    #eldeco-card .err {
+      color: #b42318;
+      font-size: 13px;
+      min-height: 18px;
+      margin: 8px 0
+    }
+
+    .unit-live {
+      transition: fill .15s, stroke .15s, filter .15s
+    }
+
+    .unit-live:hover {
+      filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 215, 0, .8))
+    }
+  </style>
+  <div id="eldeco-lock">
+    <div id="eldeco-card">
+      <h2>Visitor Registration</h2>
+      <p>Please enter your details to access the property.</p>
+      <form id="eldecoVisitorForm"><input id="evName" placeholder="Name" required maxlength="120"><input id="evMobile"
+          placeholder="Mobile number" inputmode="numeric" required><input id="evEmail" type="email"
+          placeholder="Email (optional)"><input id="evCity" placeholder="City">
+        <div id="evErr" class="err"></div><button id="evSubmit">Enter Website</button>
+      </form>
+    </div>
+  </div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/+esm';
+    const SUPABASE_URL = 'https://jpiudwptxzzgtgxtbnsa.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_fJcnKZol-Xh_mSD9CORA5A_epWa097V';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    window.supabase = supabase;
+
+    const lock = document.getElementById('eldeco-lock');
+    const form = document.getElementById('eldecoVisitorForm');
+    const err = document.getElementById('evErr');
+    const evName = document.getElementById('evName');
+    const evMobile = document.getElementById('evMobile');
+    const evEmail = document.getElementById('evEmail');
+    const evCity = document.getElementById('evCity');
+    const evSubmit = document.getElementById('evSubmit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.textContent = '';
+      const name = evName.value.trim();
+      const mobile = evMobile.value.replace(/\D/g, '');
+      const email = evEmail.value.trim() || null;
+      const city = evCity.value.trim() || null;
+      if (!name) { err.textContent = 'Please enter your name.'; return; }
+      if (mobile.length < 10 || mobile.length > 15) { err.textContent = 'Enter a valid mobile number.'; return; }
+      evSubmit.disabled = true;
+      evSubmit.textContent = 'Entering...';
+      const { error } = await supabase.from('visitors').insert({ name, mobile, email, city, source: 'eldeco-ipx' });
+      if (error) {
+        console.error('Visitor registration failed:', error);
+        err.textContent = error.message || 'Unable to register. Please try again.';
+        evSubmit.disabled = false;
+        evSubmit.textContent = 'Enter Website';
+        return;
+      }
+      sessionStorage.setItem('eldecoVisitor', JSON.stringify({ name, mobile, email, city }));
+      lock.classList.add('hidden');
+      document.body.classList.add('eldeco-unlocked');
+    });
+
+    let showAvailability = true;
+
+    function updateAvailabilityButton() {
+      const btn = document.getElementById('availabilityToggle'); if (!btn) return;
+      btn.textContent = showAvailability ? 'Availability ON' : 'Availability OFF';
+      btn.setAttribute('aria-pressed', String(showAvailability));
+      btn.classList.toggle('off', !showAvailability);
+    }
+    function renderAvailability(el) {
+      if (showAvailability && el.dataset.statusColor) {
+        el.style.fill = el.dataset.statusColor; el.style.fillOpacity = '.45';
+        el.style.stroke = el.dataset.statusColor; el.style.strokeOpacity = '.95';
+      } else {
+        el.style.fill = 'rgba(255,255,255,0.001)'; el.style.fillOpacity = '1';
+        el.style.stroke = 'rgba(255,255,255,0.75)'; el.style.strokeOpacity = '1';
+      }
+    }
+    async function applyInventory() {
+      const [unitsResult, statusesResult] = await Promise.all([
+        supabase.from('units').select('unit_number,svg_id,status_id,buyer_name,buyer_number'),
+        supabase.from('status_categories').select('id,name,color').eq('active', true).order('sort_order')
+      ]);
+      if (unitsResult.error || statusesResult.error) { console.warn('Eldeco inventory load failed', unitsResult.error || statusesResult.error); return; }
+      const units = unitsResult.data || [], statuses = statusesResult.data || [], statusMap = new Map(statuses.map(s => [s.id, s]));
+      const legend = document.getElementById('legend');
+      if (legend) {
+        legend.innerHTML = '';
+        if (showAvailability) statuses.forEach(status => {
+          const item = document.createElement('span'); item.style.cssText = 'display:inline-flex;align-items:center;gap:6px';
+          const swatch = document.createElement('i'); swatch.style.cssText = 'width:12px;height:12px;border-radius:3px;background:' + status.color;
+          item.appendChild(swatch); item.appendChild(document.createTextNode(status.name)); legend.appendChild(item);
+        });
+      }
+      document.querySelectorAll('#floorSVG .unit').forEach(el => {
+        const unit = units.find(u => u.svg_id === el.id || u.unit_number === el.dataset.unit);
+        const status = unit ? statusMap.get(unit.status_id) : null; el.classList.add('unit-live');
+        delete el.dataset.status; delete el.dataset.statusColor; delete el.dataset.buyer; delete el.dataset.buyerNumber;
+        if (status) { el.dataset.status = status.name; el.dataset.statusColor = status.color; el.dataset.buyer = unit.buyer_name || ''; el.dataset.buyerNumber = unit.buyer_number || ''; }
+        renderAvailability(el);
+      });
+      updateAvailabilityButton();
+    }
+    document.getElementById('availabilityToggle').addEventListener('click', function () {
+      showAvailability = !showAvailability;
+      document.getElementById('legend')?.classList.toggle('availability-hidden', !showAvailability);
+      document.querySelectorAll('#floorSVG .unit').forEach(renderAvailability); updateAvailabilityButton();
+    });
+
+    /* Bright hover outline while preserving each unit's live status color. */
+    document.querySelectorAll('#floorSVG .unit').forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        el.dataset.originalStrokeWidth = el.style.strokeWidth || '';
+        el.style.strokeWidth = '7';
+        el.style.filter = 'brightness(1.2) drop-shadow(0 0 7px rgba(255,215,0,.95)) drop-shadow(0 0 18px rgba(255,215,0,.65))';
+      });
+      el.addEventListener('mouseleave', function () {
+        el.style.strokeWidth = el.dataset.originalStrokeWidth || '';
+        el.style.filter = '';
+      });
+    });
+
+    applyInventory();
+    supabase.channel('eldeco-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'units' }, applyInventory)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'status_categories' }, applyInventory)
+      .subscribe();
+  </script>
 </body>
 
-</html
->
+</html>
