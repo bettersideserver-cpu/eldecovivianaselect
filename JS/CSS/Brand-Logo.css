@@ -27,6 +27,11 @@
     --brand-logo-w: 158px;
     --brand-gap: 32px;
     --brand-gold: rgba(232, 190, 110, 0.95);
+    /* white backing plate */
+    --brand-plate-bg: #fff;
+    --brand-plate-pad-x: 14px;
+    --brand-plate-pad-y: 11px;
+    --brand-plate-radius: 10px;
 }
 
 .plot-brand {
@@ -107,15 +112,42 @@
     width: var(--brand-logo-w);
     height: auto;
     /* An inline <svg> has no intrinsic pixel box once width/height attrs are
-       removed, so height:auto alone can collapse it. viewBox is 2016x1158. */
-    aspect-ratio: 2016 / 1158;
+       removed, so height:auto alone can collapse it. Must match the SVG's
+       viewBox, which is TIGHT to the ink (18 185 1469 788) rather than the
+       full 2016x1158 mask canvas -- the old canvas had 27% dead space down
+       the right edge, which showed as lopsided white space on the plate. */
+    aspect-ratio: 1469 / 788;
     overflow: visible;
-    /* No backing plate, per request. The drop-shadows are what make the
-       white VIVIANA survive the BRIGHT washed-out fields, and the light
-       greens survive the dark patches. Two stacked shadows: a tight dark
-       edge for definition, a wider soft one for separation. */
-    filter:
-        drop-shadow(0 1px 1px rgba(0, 0, 0, .55)) drop-shadow(0 3px 10px rgba(0, 0, 0, .45));
+}
+
+/* ═══ WHITE BACKING PLATE ═══
+   Requested for readability: the aerial map runs from washed-out pale
+   fields to dark tree cover, and no single artwork colour survives both.
+   A solid white card fixes contrast outright.
+
+   This is WHY the inlined SVG uses the CARD colourway (dark #1a2026
+   VIVIANA) instead of -onmap (white VIVIANA) — white type on a white
+   plate is invisible. If you ever revert the plate, swap the inlined SVG
+   back to eldeco-viviana-onmap-gated.svg.
+
+   Padding is uneven on purpose: the artwork's own viewBox has more
+   slack under VIVIANA than above the canopy. */
+.plot-brand__plate {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--brand-plate-pad-y) var(--brand-plate-pad-x);
+    background: var(--brand-plate-bg);
+    border-radius: var(--brand-plate-radius);
+    /* hairline gold edge ties it to the connector and the dot */
+    box-shadow:
+        0 0 0 1px rgba(232, 190, 110, .55),
+        0 2px 6px rgba(0, 0, 0, .28),
+        0 8px 22px rgba(0, 0, 0, .22);
+    /* the canopy sway overshoots the viewBox slightly; let it breathe
+       instead of getting clipped by the rounded corners */
+    overflow: visible;
 }
 
 /* ═══ TABLET / SMALL LAPTOP ═══ */
@@ -123,6 +155,9 @@
     :root {
         --brand-logo-w: 132px;
         --brand-gap: 26px;
+        --brand-plate-pad-x: 12px;
+        --brand-plate-pad-y: 9px;
+        --brand-plate-radius: 9px;
     }
 }
 
@@ -135,6 +170,9 @@
         --brand-counter: calc(-1 * var(--map-rotate, 90deg));
         --brand-logo-w: 112px;
         --brand-gap: 20px;
+        --brand-plate-pad-x: 10px;
+        --brand-plate-pad-y: 8px;
+        --brand-plate-radius: 8px;
     }
 
     .plot-brand__dot {
@@ -158,6 +196,9 @@
     :root {
         --brand-logo-w: 96px;
         --brand-gap: 16px;
+        --brand-plate-pad-x: 9px;
+        --brand-plate-pad-y: 7px;
+        --brand-plate-radius: 7px;
     }
 
     .plot-brand__body {
@@ -179,6 +220,9 @@
         --brand-counter: 0deg;
         --brand-logo-w: 104px;
         --brand-gap: 18px;
+        --brand-plate-pad-x: 10px;
+        --brand-plate-pad-y: 8px;
+        --brand-plate-radius: 8px;
     }
 }
 
