@@ -789,3 +789,17 @@ body {
         /* keep it beneath overlays if needed */
     }
 }
+@media (max-width: 768px) and (orientation: portrait) {
+
+    #dotPinInfoCard {
+        transform: scale(0.65);
+        transform-origin: bottom right;
+
+        bottom: 20px !important;
+        right: 20px !important;
+
+        top: auto !important;
+        left: auto !important;
+    }
+
+}
