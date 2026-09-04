@@ -803,3 +803,10 @@ body {
     }
 
 }
+
+/* OMAXE — mobile logo position */
+@media (max-width: 768px) and (orientation: portrait) {
+    .dot-pin[data-pin-id="Omaxe"] .dot-pin__logo {
+        transform: translate(0px, 0px);
+    }
+}

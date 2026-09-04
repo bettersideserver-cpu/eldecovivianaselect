@@ -2329,16 +2329,7 @@
        through, otherwise falls through to the href on the anchor.
        Change the href in the markup to point at your landing page.
     ===================================== */
-    (function () {
-      var back = document.getElementById("eldBackBtn");
-      if (!back) return;
-      back.addEventListener("click", function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-      });
-    })();
+ 
   </script>
 
 
