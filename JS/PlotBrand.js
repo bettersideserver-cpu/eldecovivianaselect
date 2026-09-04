@@ -20,14 +20,31 @@
 (function () {
     "use strict";
 
-    // Right-middle of the "Eldeco Viviana Select" path bbox, as a
-    // percentage of the map. Path bbox = x 8.11-18.46%, y 53.22-67.41%.
-    // Nudged just outside the right edge so the connector starts clear
-    // of the glowing outline instead of on top of it.
-    var ANCHOR = { x: 18.9, y: 60.32 };
-
     var IMAGE_SELECTOR = "#mainImage";
     var BRAND_SELECTOR = ".plot-brand";
+
+    // Default anchor = right-middle of Index.html's "Eldeco Viviana Select"
+    // path bbox, as a percentage of the map. That bbox is x 8.11-18.46%,
+    // y 53.22-67.41%; the x is nudged just outside the right edge so the
+    // connector starts clear of the glowing outline instead of on top of it.
+    var DEFAULT_ANCHOR = { x: 18.9, y: 60.32 };
+
+    // Every page has a different plot shape, so the anchor is per-page:
+    // put data-anchor-x / data-anchor-y on .plot-brand to override.
+    // zoommap.html's plot is a diagonal band (bbox x 22.25-54.37%,
+    // y 26.59-52.54%), so it uses its own values.
+    function readAnchor() {
+        var brand = document.querySelector(BRAND_SELECTOR);
+        if (!brand) return DEFAULT_ANCHOR;
+        var x = parseFloat(brand.getAttribute("data-anchor-x"));
+        var y = parseFloat(brand.getAttribute("data-anchor-y"));
+        return {
+            x: isFinite(x) ? x : DEFAULT_ANCHOR.x,
+            y: isFinite(y) ? y : DEFAULT_ANCHOR.y
+        };
+    }
+
+    var ANCHOR = DEFAULT_ANCHOR;
 
     function getImageBox(img, wrapper) {
         var naturalW = img.naturalWidth || Number(img.getAttribute("width")) || 8192;
@@ -74,8 +91,139 @@
 
         brand.style.left = ((xPx / wrapperW) * 100).toFixed(5) + "%";
         brand.style.top = ((yPx / wrapperH) * 100).toFixed(5) + "%";
+        chooseSide(brand);
         brand.classList.add("is-placed");
         startAnimation(brand);
+    }
+
+    /* ── which side of the anchor does the plate sit on? ──────────────
+       Hard requirement: the logo must never cover the plot outline.
+       A single fixed side cannot satisfy that at every viewport --
+       zoommap.html's band runs diagonally, so laying the plate out
+       leftward is clear of it on desktop but crosses it once the map
+       rotates 90deg for mobile portrait (measured: 12 of 121 sampled
+       points inside the outline at 390x844), and at 820x1180 the
+       leftward assembly ran 8px off the left edge of the screen.
+
+       So the side is chosen by measurement, every layout pass. The page
+       states a preference with data-side; we try that first and keep it
+       unless the other side scores better.
+
+       Overlap is tested with path.isPointInFill() in the path's own user
+       space via getScreenCTM().inverse(). getBoundingClientRect() is
+       useless here -- on a diagonal band it returns an axis-aligned box
+       that hugely overstates coverage and reports a false collision.
+       ──────────────────────────────────────────────────────────────── */
+    var SIDES = ["right", "left", "up", "down"];
+
+    // UI that must not be covered either. Missing selectors are just skipped,
+    // so the same list is safe on both pages.
+    var OBSTACLES = [".prop-address", ".top-controls", "#backBtn", "#ui-hint",
+        ".panel-toggle", "#panelToggleBtn"];
+
+    function applySide(brand, side) {
+        for (var i = 0; i < SIDES.length; i++) {
+            brand.classList.toggle("plot-brand--" + SIDES[i], SIDES[i] === side);
+        }
+        void brand.offsetWidth;                  // force reflow before measuring
+    }
+
+    function scoreSide(brand) {
+        var body = brand.querySelector(".plot-brand__body");
+        if (!body) return 0;
+        var r = body.getBoundingClientRect();
+        if (!r.width || !r.height) return 0;
+
+        // 1. how far the assembly spills out of the viewport, in px
+        var off = Math.max(0, -r.left) + Math.max(0, -r.top) +
+            Math.max(0, r.right - window.innerWidth) +
+            Math.max(0, r.bottom - window.innerHeight);
+
+        // 2. how much of it lands ON THE PLOT OUTLINE, as a sampled point
+        //    count. This is the constraint the user stated explicitly.
+        var hits = 0;
+        var path = document.querySelector(".Cutout path");
+        if (path && path.isPointInFill && window.DOMPoint) {
+            var ctm = path.getScreenCTM();
+            if (ctm) {
+                var inv = ctm.inverse();
+                var M = 6;                       // safety margin around the plate
+                var L = r.left - M, T = r.top - M;
+                var W = r.width + 2 * M, H = r.height + 2 * M;
+                for (var i = 0; i <= 8; i++) {
+                    for (var j = 0; j <= 8; j++) {
+                        var p = new DOMPoint(L + W * i / 8, T + H * j / 8)
+                            .matrixTransform(inv);
+                        try { if (path.isPointInFill(p)) hits++; } catch (e) { }
+                    }
+                }
+            }
+        }
+
+        // 3. overlap area against the fixed UI, in px^2
+        var ui = 0;
+        for (var k = 0; k < OBSTACLES.length; k++) {
+            var el = document.querySelector(OBSTACLES[k]);
+            if (!el || !el.offsetParent) continue;
+            var o = el.getBoundingClientRect();
+            var ow = Math.min(r.right, o.right) - Math.max(r.left, o.left);
+            var oh = Math.min(r.bottom, o.bottom) - Math.max(r.top, o.top);
+            if (ow > 0 && oh > 0) ui += ow * oh;
+        }
+
+        // Covering the outline is the hard "no", so weight it far above
+        // clipping the screen edge or clipping a UI card.
+        return hits * 100000 + off * 50 + ui;
+    }
+
+    function chooseSide(brand) {
+        var declared = (brand.getAttribute("data-side") || "right").toLowerCase();
+        // declared preference first, then the rest, so a clean declared fit wins
+        var order = [declared].concat(SIDES.filter(function (s) {
+            return s !== declared;
+        }));
+
+        var best = order[0], bestScore = Infinity;
+        for (var i = 0; i < order.length; i++) {
+            applySide(brand, order[i]);
+            var s = scoreSide(brand);
+            if (s < bestScore) { bestScore = s; best = order[i]; }
+            if (bestScore === 0) break;          // clean fit, stop looking
+        }
+        applySide(brand, best);
+        brand.setAttribute("data-side-used", best);
+        fitToViewport(brand);
+    }
+
+    /* Last resort: at 820x1180 the anchor sits only 178px from the left
+       edge while the leftward assembly is ~186px wide, so the plate clipped
+       8px off screen -- and every other direction crossed the outline, which
+       is the worse failure. Rather than hardcode a smaller gap into the
+       tablet breakpoint, shorten the connector by just enough to fit. The
+       dot stays on the anchor and the plate stays the same size; only the
+       gap gives. Floored so the connector never vanishes entirely. */
+    var GAP_FLOOR = 8;
+
+    function fitToViewport(brand) {
+        brand.style.removeProperty("--brand-gap");
+        var body = brand.querySelector(".plot-brand__body");
+        if (!body) return;
+
+        var gap = parseFloat(getComputedStyle(brand).getPropertyValue("--brand-gap"));
+        if (!isFinite(gap)) return;
+
+        for (var pass = 0; pass < 6; pass++) {
+            var r = body.getBoundingClientRect();
+            var spill = Math.max(
+                Math.max(0, -r.left), Math.max(0, -r.top),
+                Math.max(0, r.right - window.innerWidth),
+                Math.max(0, r.bottom - window.innerHeight)
+            );
+            if (spill <= 0.5 || gap <= GAP_FLOOR) break;
+            gap = Math.max(GAP_FLOOR, gap - Math.max(2, Math.ceil(spill)));
+            brand.style.setProperty("--brand-gap", gap + "px");
+            void brand.offsetWidth;
+        }
     }
 
     /* ── animation gate ─────────────────────────────────────────────
@@ -116,6 +264,7 @@
     }
 
     function init() {
+        ANCHOR = readAnchor();
         position();
         schedule();
 

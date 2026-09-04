@@ -100,6 +100,54 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
 }
 
+/* ═══ DIRECTION VARIANTS — --left / --up / --down ═══
+   The default (no modifier) lays the assembly out RIGHTWARD: dot on the
+   outline, then connector, then plate.
+
+   Page 2's plot is a diagonal band, so no single direction is clear of it
+   at every viewport -- laying out leftward misses it on desktop but crosses
+   it once the map rotates for mobile portrait. PlotBrand.js therefore picks
+   a direction by MEASUREMENT on each layout pass and applies one of these
+   classes. Do not hardcode a direction; set data-side as a preference.
+
+   In each case the reverse/translate pair keeps the DOT (not the plate) on
+   the anchor point, and the connector gradient fades away from the plate. */
+.plot-brand--left .plot-brand__body {
+    flex-direction: row-reverse;
+    transform: translate(-100%, -50%);
+}
+
+.plot-brand--left .plot-brand__line {
+    background: linear-gradient(270deg, var(--brand-gold), rgba(232, 190, 110, .25));
+}
+
+.plot-brand--down .plot-brand__body {
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+}
+
+.plot-brand--up .plot-brand__body {
+    flex-direction: column-reverse;
+    align-items: center;
+    transform: translate(-50%, -100%);
+}
+
+/* the connector has to stand up for the vertical variants */
+.plot-brand--down .plot-brand__line,
+.plot-brand--up .plot-brand__line {
+    width: 2px;
+    height: var(--brand-gap);
+}
+
+.plot-brand--down .plot-brand__line {
+    background: linear-gradient(180deg, var(--brand-gold), rgba(232, 190, 110, .25));
+}
+
+.plot-brand--up .plot-brand__line {
+    background: linear-gradient(0deg, var(--brand-gold), rgba(232, 190, 110, .25));
+}
+
 /* Specificity note: wbn05d6fbh.css has `.image-wrapper img` (0,1,1) setting
    width/height to 100%/auto per orientation. A bare `.plot-brand__img` (0,1,0)
    LOSES to it — portrait gave the logo its natural 2016px, landscape collapsed
@@ -113,10 +161,12 @@
     height: auto;
     /* An inline <svg> has no intrinsic pixel box once width/height attrs are
        removed, so height:auto alone can collapse it. Must match the SVG's
-       viewBox, which is TIGHT to the ink (18 185 1469 788) rather than the
+       viewBox, which is TIGHT to the ink (18 185 1476 916) rather than the
        full 2016x1158 mask canvas -- the old canvas had 27% dead space down
-       the right edge, which showed as lopsided white space on the plate. */
-    aspect-ratio: 1469 / 788;
+       the right edge, which showed as lopsided white space on the plate.
+       KEEP IN STEP WITH build.py: it derives the viewBox from INK + MARGIN,
+       and adding the SELECT line took this from 1469/788 to 1476/916. */
+    aspect-ratio: 1476 / 916;
     overflow: visible;
 }
 
@@ -201,17 +251,11 @@
         --brand-plate-radius: 7px;
     }
 
-    .plot-brand__body {
-        flex-direction: column;
-        align-items: center;
-        transform: translateX(-50%);
-    }
-
-    .plot-brand__line {
-        width: 2px;
-        height: var(--brand-gap);
-        background: linear-gradient(180deg, var(--brand-gold), rgba(232, 190, 110, .25));
-    }
+    /* NOTE: this block used to force flex-direction: column here, to stop the
+       logo running rightward into .prop-address on the narrowest screens.
+       That is now handled properly -- PlotBrand.js measures the obstacles
+       (.prop-address included) and picks a direction, so hardcoding one here
+       would just override its choice. Only the size vars remain. */
 }
 
 /* ═══ LANDSCAPE PHONES — map is NOT rotated, keep counter at 0 ═══ */
