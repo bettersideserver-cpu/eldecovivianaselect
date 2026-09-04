@@ -1,105 +1,184 @@
 /* ═══════════════════════════════════════════════════════════════
-   BRAND LOGO — animated Eldeco Viviana mark, floats over the map
+   BRAND LOGO — animated Eldeco Viviana mark, pinned to the site plan
    ---------------------------------------------------------------
-   Placement mirrors .prop-address (defined inline in Index.html)
-   so the two fixed cards read as one system: same surface, blur,
-   border, radius and edge offsets — just anchored top-LEFT.
+   Sits just OUTSIDE the right edge of the glowing "Eldeco Viviana
+   Select" outline, joined to it by a short connector and an anchor
+   dot — so the outline itself is never covered.
 
-   The animation lives INSIDE the SVG file, so it plays even though
-   the file is referenced with <img>. Nothing to drive from JS.
+   Position comes from JS/PlotBrand.js (left/top in %), because the
+   map image is letterboxed inside .image-wrapper on desktop and a
+   raw percentage would resolve against the wrapper, not the image.
 
-   IMPORTANT: the .brand-logo element must stay OUTSIDE
-   .map-rotate-stage / .map-rotate-frame, or it will be rotated 90°
-   along with the map on mobile portrait.
+   NESTING — this is the whole trick, don't flatten it:
+     .plot-brand           anchor point, zero-size, in MAP space.
+                           Inherits the 90deg rotation on mobile.
+     .plot-brand__upright  counter-rotates, so its local axes are
+                           SCREEN-aligned again. Everything inside is
+                           therefore upright AND offset in screen space.
+     .plot-brand__body     laid out rightward from the anchor.
+
+   Size is in px, never %, so the logo never shrinks with the map.
    ═══════════════════════════════════════════════════════════════ */
 
-.brand-logo {
-    position: fixed;
-    top: 38px;
-    left: 24px;
-    z-index: 10001;
+:root {
+    /* 0 on desktop: .map-rotate-frame is display:contents there, so no
+       rotation is applied and nothing needs undoing. */
+    --brand-counter: 0deg;
+    --brand-logo-w: 158px;
+    --brand-gap: 32px;
+    --brand-gold: rgba(232, 190, 110, 0.95);
+}
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 14px;
-
-    /* same card treatment as .prop-address */
-    background: var(--surface-2, rgba(255, 255, 255, 0.82));
-    border: 1px solid rgba(168, 120, 42, 0.18);
-    border-radius: 10px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 4px 18px rgba(23, 24, 29, 0.07);
-
-    /* purely decorative — never eat map clicks */
+.plot-brand {
+    position: absolute;
+    left: 18.9%;
+    /* JS overwrites */
+    top: 60.32%;
+    width: 0;
+    height: 0;
+    z-index: 28;
+    /* above .Cutout (2), below the dot pins (30) */
     pointer-events: none;
     -webkit-user-select: none;
     user-select: none;
+
+    /* fade in only once JS has resolved the true anchor, so it never
+       flashes at the wrong spot on first paint */
+    opacity: 0;
+    transition: opacity .45s ease .15s;
 }
 
-.brand-logo__img {
+.plot-brand.is-placed {
+    opacity: 1;
+}
+
+.plot-brand__upright {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+    transform: rotate(var(--brand-counter));
+}
+
+/* anchor dot, sits exactly on the outline edge */
+.plot-brand__dot {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 2px var(--brand-gold), 0 1px 4px rgba(0, 0, 0, .45);
+}
+
+.plot-brand__body {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    /* the anchor is zero-width; without this the flex row
+       shrink-to-fits to 0 and collapses the logo */
+    transform: translateY(-50%);
+    /* centre on the anchor */
+}
+
+.plot-brand__line {
+    flex: 0 0 auto;
+    width: var(--brand-gap);
+    height: 2px;
+    background: linear-gradient(90deg, var(--brand-gold), rgba(232, 190, 110, .25));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+
+/* Specificity note: wbn05d6fbh.css has `.image-wrapper img` (0,1,1) setting
+   width/height to 100%/auto per orientation. A bare `.plot-brand__img` (0,1,0)
+   LOSES to it — portrait gave the logo its natural 2016px, landscape collapsed
+   it to 26px. Scoping with the parent class (0,2,0) wins, and both width and
+   height must be restated because each orientation branch sets a different one. */
+.plot-brand .plot-brand__img {
     display: block;
-    width: 158px;   /* 336 x 193 source -> 158 x 91 */
+    flex: 0 0 auto;
+    width: var(--brand-logo-w);
     height: auto;
+    /* No backing plate, per request. The drop-shadows are what make the
+       white VIVIANA survive the BRIGHT washed-out fields, and the light
+       greens survive the dark patches. Two stacked shadows: a tight dark
+       edge for definition, a wider soft one for separation. */
+    filter:
+        drop-shadow(0 1px 1px rgba(0, 0, 0, .55)) drop-shadow(0 3px 10px rgba(0, 0, 0, .45));
 }
 
 /* ═══ TABLET / SMALL LAPTOP ═══ */
 @media (max-width: 1024px) {
-    .brand-logo {
-        top: 30px;
-        left: 18px;
-        padding: 8px 12px;
-    }
-
-    .brand-logo__img {
-        width: 134px;
+    :root {
+        --brand-logo-w: 132px;
+        --brand-gap: 26px;
     }
 }
 
-/* ═══ MOBILE ═══ */
-@media (max-width: 768px) {
-    .brand-logo {
-        top: 52px;          /* matches .prop-address mobile offset */
-        left: 12px;
-        padding: 6px 10px;
-        border-radius: 8px;
+/* ═══ MOBILE PORTRAIT — map is rotated 90deg, so undo it here ═══
+   Mirrors the counter-rotation .dot-pin__button uses in Map-Rotate.css.
+   Driving it off --map-rotate means flipping that one variable to -90deg
+   keeps the logo upright automatically. */
+@media (max-width: 768px) and (orientation: portrait) {
+    :root {
+        --brand-counter: calc(-1 * var(--map-rotate, 90deg));
+        --brand-logo-w: 112px;
+        --brand-gap: 20px;
     }
 
-    .brand-logo__img {
-        width: 112px;
-    }
-}
-
-/* ═══ VERY SMALL PHONES ═══ */
-@media (max-width: 360px) {
-    .brand-logo {
-        top: 48px;
-        left: 10px;
-        padding: 5px 9px;
+    .plot-brand__dot {
+        left: -3.5px;
+        top: -3.5px;
+        width: 7px;
+        height: 7px;
     }
 
-    .brand-logo__img {
-        width: 94px;
+    .plot-brand__line {
+        height: 1.5px;
     }
 }
 
-/* ═══ LANDSCAPE PHONES — vertical room is scarce, shrink further ═══ */
+/* ═══ VERY SMALL PHONES ═══
+   At <=380px the anchor lands high on the screen and running the logo
+   rightward drove it straight into .prop-address (top-right). Standing the
+   connector vertical drops the logo BELOW the outline instead, which clears
+   the address card completely and keeps dot -> line -> logo visually joined. */
+@media (max-width: 380px) and (orientation: portrait) {
+    :root {
+        --brand-logo-w: 96px;
+        --brand-gap: 16px;
+    }
+
+    .plot-brand__body {
+        flex-direction: column;
+        align-items: center;
+        transform: translateX(-50%);
+    }
+
+    .plot-brand__line {
+        width: 2px;
+        height: var(--brand-gap);
+        background: linear-gradient(180deg, var(--brand-gold), rgba(232, 190, 110, .25));
+    }
+}
+
+/* ═══ LANDSCAPE PHONES — map is NOT rotated, keep counter at 0 ═══ */
 @media (max-width: 900px) and (orientation: landscape) and (max-height: 480px) {
-    .brand-logo {
-        top: 10px;
-        left: 10px;
-        padding: 5px 9px;
-    }
-
-    .brand-logo__img {
-        width: 96px;
+    :root {
+        --brand-counter: 0deg;
+        --brand-logo-w: 104px;
+        --brand-gap: 18px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    /* the SVG disables its own animation; nothing extra needed here */
-    .brand-logo {
+    .plot-brand {
         transition: none;
     }
 }

@@ -1945,12 +1945,6 @@
 
 <body>
 
-    <!-- BRAND LOGO — animated SVG, top-left. Must stay outside .map-rotate-stage. -->
-    <div class="brand-logo" aria-hidden="false">
-        <img class="brand-logo__img" src="asset/logo/eldeco-viviana-animated.svg"
-             width="336" height="193" alt="Eldeco Viviana Select">
-    </div>
-
         <div class="prop-address">
          <span class="pa-label">Location</span>
         <span class="pa-line">Eldeco Viviana Select</span>
@@ -2006,6 +2000,20 @@
                 width="8192" height="4175" class="blur-up" />
             <!-- Responsive dot/logo layer: positions are calculated against the visible image bounds -->
             <div id="dotPinLayer" class="dot-pin-layer" aria-hidden="false"></div>
+            <!-- BRAND LOGO — pinned beside the "Eldeco Viviana Select" outline.
+                 Lives INSIDE .image-wrapper so it tracks map geography; the
+                 __upright layer counter-rotates it on mobile. Position is set
+                 by JS/PlotBrand.js. -->
+            <div class="plot-brand">
+                <div class="plot-brand__upright">
+                    <span class="plot-brand__dot" aria-hidden="true"></span>
+                    <div class="plot-brand__body">
+                        <span class="plot-brand__line" aria-hidden="true"></span>
+                        <img class="plot-brand__img" src="asset/logo/eldeco-viviana-onmap-animated.svg"
+                            width="336" height="193" alt="Eldeco Viviana Select">
+                    </div>
+                </div>
+            </div>
             <div class="Cutout">
                 <svg viewBox="0 0 8192 4175" xmlns="http://www.w3.org/2000/svg">
                     <path id="Eldeco Viviana Select" class="st0" data-link="zoommap.html"
@@ -2020,6 +2028,7 @@
 
     <script src="JS/MapRotate.js"></script>
     <script src="JS/DotPin.js"></script>
+    <script src="JS/PlotBrand.js"></script>
     <script src="JS/CutoutPath.js"></script>
     <script src="JS/Notification/UI_Hint.js"></script>
     <!-- <script src="JS/BackButton.js"></script> -->
