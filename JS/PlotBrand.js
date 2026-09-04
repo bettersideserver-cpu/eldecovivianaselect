@@ -29,15 +29,44 @@
     // connector starts clear of the glowing outline instead of on top of it.
     var DEFAULT_ANCHOR = { x: 18.9, y: 60.32 };
 
+    /* The one media condition that means "mobile portrait". Declared once and
+       reused by readAnchor() and declaredSide(), and kept byte-identical to
+       the query Brand-Logo.css uses for its mobile size vars, so CSS and JS
+       can never disagree about which mode they are in. */
+    var MOBILE_MQ = "(max-width: 768px) and (orientation: portrait)";
+
+    function isMobilePortrait() {
+        return !!(window.matchMedia && window.matchMedia(MOBILE_MQ).matches);
+    }
+
     // Every page has a different plot shape, so the anchor is per-page:
     // put data-anchor-x / data-anchor-y on .plot-brand to override.
     // zoommap.html's plot is a diagonal band (bbox x 22.25-54.37%,
     // y 26.59-52.54%), so it uses its own values.
+    //
+    // data-anchor-x-mobile / data-anchor-y-mobile override again in mobile
+    // portrait. This exists because the map rotates 90deg on mobile, so a
+    // screen-space direction ("put the logo to the left") runs through the
+    // map along a completely different bearing than it does on desktop. With
+    // the desktop anchor kept, the requested mobile side ran lengthwise ALONG
+    // the diagonal outline and could not be cleared by any connector length
+    // (measured: hits plateau at 2-3 while the plate starts leaving the
+    // screen). Moving the anchor to a different point on the plot perimeter
+    // is what makes the requested side land on empty field instead.
     function readAnchor() {
         var brand = document.querySelector(BRAND_SELECTOR);
         if (!brand) return DEFAULT_ANCHOR;
+
         var x = parseFloat(brand.getAttribute("data-anchor-x"));
         var y = parseFloat(brand.getAttribute("data-anchor-y"));
+
+        if (isMobilePortrait()) {
+            var mx = parseFloat(brand.getAttribute("data-anchor-x-mobile"));
+            var my = parseFloat(brand.getAttribute("data-anchor-y-mobile"));
+            if (isFinite(mx)) x = mx;
+            if (isFinite(my)) y = my;
+        }
+
         return {
             x: isFinite(x) ? x : DEFAULT_ANCHOR.x,
             y: isFinite(y) ? y : DEFAULT_ANCHOR.y
@@ -45,6 +74,13 @@
     }
 
     var ANCHOR = DEFAULT_ANCHOR;
+
+    /* readAnchor() now depends on a media query, so the anchor has to be
+       re-read whenever we reposition -- otherwise rotating the phone or
+       crossing the 768px breakpoint keeps the anchor for the mode we just
+       left. setAnchor() (console / future trigger) must still win, so an
+       explicit override latches this off. */
+    var ANCHOR_OVERRIDDEN = false;
 
     function getImageBox(img, wrapper) {
         var naturalW = img.naturalWidth || Number(img.getAttribute("width")) || 8192;
@@ -81,6 +117,9 @@
 
         var wrapper = img.closest(".image-wrapper");
         if (!wrapper) return;
+
+        // re-read so the mobile-portrait anchor tracks the breakpoint
+        if (!ANCHOR_OVERRIDDEN) ANCHOR = readAnchor();
 
         var box = getImageBox(img, wrapper);
         var wrapperW = wrapper.offsetWidth || wrapper.clientWidth || 1;
@@ -176,16 +215,34 @@
         return hits * 100000 + off * 50 + ui;
     }
 
+    /* The preferred side differs between desktop and mobile, because the map
+       rotates for mobile portrait and what reads as "beside the plot" changes
+       with it. data-side-mobile overrides data-side under exactly the same
+       media condition Brand-Logo.css uses for its mobile vars, so the two
+       can never disagree about which mode they are in. */
+    function declaredSide(brand) {
+        var mob = brand.getAttribute("data-side-mobile");
+        if (isMobilePortrait() && mob) return mob.toLowerCase();
+        return (brand.getAttribute("data-side") || "right").toLowerCase();
+    }
+
     function chooseSide(brand) {
-        var declared = (brand.getAttribute("data-side") || "right").toLowerCase();
+        var declared = declaredSide(brand);
         // declared preference first, then the rest, so a clean declared fit wins
         var order = [declared].concat(SIDES.filter(function (s) {
             return s !== declared;
         }));
 
+        /* Score each candidate AFTER shrinking its connector to fit. Scoring
+           the un-shrunk assembly used to discard a direction for a few px of
+           spill that fitToViewport() would have absorbed anyway -- which is
+           how the requested side lost to a fallback at 360x640. Outline hits
+           are unaffected by the gap on the axes that matter, so this only
+           changes which side wins on the soft penalties. */
         var best = order[0], bestScore = Infinity;
         for (var i = 0; i < order.length; i++) {
             applySide(brand, order[i]);
+            fitToViewport(brand);
             var s = scoreSide(brand);
             if (s < bestScore) { bestScore = s; best = order[i]; }
             if (bestScore === 0) break;          // clean fit, stop looking
@@ -204,6 +261,15 @@
        gap gives. Floored so the connector never vanishes entirely. */
     var GAP_FLOOR = 8;
 
+    /* Deliberately 0, i.e. "must be on screen" and nothing more. An 8px
+       cosmetic inset was tried so the leftward plate on Index.html mobile
+       wouldn't sit ~1px off the left edge, and it backfired: the only way to
+       gain the inset is to shorten the connector, which drags the plate back
+       toward the dot -- and the dot sits just off the outline, so the plate
+       crept ONTO the outline (0/121 -> 2/121 at 390x844). Keeping the
+       outline clear is the stated hard constraint; the edge margin is not. */
+    var SCREEN_INSET = 0;
+
     function fitToViewport(brand) {
         brand.style.removeProperty("--brand-gap");
         var body = brand.querySelector(".plot-brand__body");
@@ -215,9 +281,9 @@
         for (var pass = 0; pass < 6; pass++) {
             var r = body.getBoundingClientRect();
             var spill = Math.max(
-                Math.max(0, -r.left), Math.max(0, -r.top),
-                Math.max(0, r.right - window.innerWidth),
-                Math.max(0, r.bottom - window.innerHeight)
+                Math.max(0, SCREEN_INSET - r.left), Math.max(0, SCREEN_INSET - r.top),
+                Math.max(0, r.right - (window.innerWidth - SCREEN_INSET)),
+                Math.max(0, r.bottom - (window.innerHeight - SCREEN_INSET))
             );
             if (spill <= 0.5 || gap <= GAP_FLOOR) break;
             gap = Math.max(GAP_FLOOR, gap - Math.max(2, Math.ceil(spill)));
@@ -307,6 +373,7 @@
             requestAnimationFrame(function () { svg.classList.add("go"); });
         },
         setAnchor: function (x, y) {
+            ANCHOR_OVERRIDDEN = true;   // stop position() re-reading the attributes
             if (Number.isFinite(x)) ANCHOR.x = x;
             if (Number.isFinite(y)) ANCHOR.y = y;
             position();

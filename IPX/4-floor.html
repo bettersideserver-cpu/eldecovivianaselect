@@ -465,22 +465,125 @@
     }
 
     /* =====================================
-       MOBILE PORTRAIT - ROTATED / VERTICAL VIEW
-       The plan is 16:9 (landscape). On a portrait phone we rotate the
-       whole stage 90deg so the long side of the plan runs down the
-       screen and fills it. Because the image AND the SVG are both
-       inside .floor-stage, one rotation moves them together - the
-       overlay stays pixel-locked to the drawing.
-       Cover math is swapped: stage width is measured against the
-       viewport HEIGHT and stage height against the viewport WIDTH,
-       since the axes trade places after the rotation.
+       MOBILE PORTRAIT - VERTICAL STACK (no rotation)
+       The plan is 16:9 (landscape). On a portrait phone we STOP
+       rotating it and stop covering the viewport. The page becomes a
+       normal, scrollable vertical document:
+
+         1. the plan sits at the top at its natural 16:9 ratio, fitted
+            to the screen width - nothing cropped, nothing rotated,
+         2. the control bar + legend flow underneath it as real page
+            content (order: 2 on a column-flex body).
+
+       The SVG stays pixel-locked to the image because the stage still
+       carries the plan ratio (aspect-ratio) and both layers fill that
+       same box exactly - identical to desktop, just un-rotated.
     ===================================== */
     @media (max-width: 768px) and (orientation: portrait) {
+
+      /* the page scrolls vertically again */
+      html,
+      body {
+        height: auto;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        background: #F4F7F5;
+      }
+
+      /* ---------- 1. plan block: natural ratio, top of the page ---------- */
+      .floor-container {
+        position: relative;
+        inset: auto;
+        order: 1;
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+        background: #EDF2EE;
+        border-bottom: 1px solid #E1E8E3;
+      }
+
       .floor-stage {
-        width: max(calc(var(--vh, 1vh) * 100), calc(100vw * (var(--plan-w) / var(--plan-h))));
-        height: max(100vw, calc(var(--vh, 1vh) * 100 * (var(--plan-h) / var(--plan-w))));
-        transform: translate(-50%, -50%) rotate(90deg);
-        transform-origin: center center;
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        height: auto;
+        aspect-ratio: var(--plan-w) / var(--plan-h);
+        transform: none;
+      }
+
+      /* image + svg keep sharing the exact same box */
+      #floorImage,
+      #floorSVG {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #floorImage {
+        object-fit: fill;
+        /* the stage already matches the 16:9 plan ratio */
+      }
+
+      /* ---------- 2. controls + legend below, in normal flow ---------- */
+      #eldTopBar {
+        position: static;
+        order: 2;
+        top: auto;
+        left: auto;
+        right: auto;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 10px 16px;
+        pointer-events: auto;
+      }
+
+      .eldBar-panel {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(20, 35, 26, .07);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      /* there is room for the label again now that the bar is full width */
+      #eldBackBtn span {
+        display: inline;
+      }
+
+      #eldBackBtn {
+        font-size: 12px;
+      }
+
+      .eldBar-plot {
+        font-size: 12px;
+      }
+
+      #availabilityToggle {
+        margin-left: auto;
+        font-size: 12px;
+      }
+
+      #legend {
+        flex-wrap: wrap;
+      }
+
+      /* the bar is page content now, so never fade it with the modal */
+      #eldTopBar.is-hidden {
+        opacity: 1;
+        pointer-events: auto;
       }
 
       #floorNav,

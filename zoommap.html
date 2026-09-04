@@ -2132,7 +2132,7 @@
         <div class="map-rotate-frame">
             <div class="Front">
                 <div class="image-wrapper">
-            <img id="mainImage" src="asset/Eldeco.jpg" data-full="asset/Eldeco.jpg" alt="Tower_2" fetchpriority="high"
+            <img id="mainImage" src="asset/Eldeco.webp" data-full="asset/Eldeco.jpg" alt="Tower_2" fetchpriority="high"
                 decoding="async" width="8192" height="4609" class="blur-up" />
             <!-- Responsive dot/logo layer: positions are calculated against the visible image bounds -->
             <div id="dotPinLayer" class="dot-pin-layer" aria-hidden="false"></div>
@@ -2143,7 +2143,15 @@
                  Y 26.59-52.54%), nudged 0.5% clear of the outline, and laid
                  out leftward via --left into the empty field. The old
                  23.5/64 sat well BELOW the project. -->
-            <div class="plot-brand" data-side="left" data-anchor-x="21.7" data-anchor-y="44.6">
+            <!-- Desktop: leftward off the band's left edge, into the empty
+                 field. Mobile portrait flips to the right AND drops the
+                 anchor to the band's lower edge (mid-x), because the map is
+                 rotated -90deg there: with the desktop anchor, rightward ran
+                 lengthwise along the diagonal band and clipped it (measured
+                 7/121 sample points, and no connector length cleared it). -->
+            <div class="plot-brand" data-side="left" data-side-mobile="right"
+                data-anchor-x="21.7" data-anchor-y="44.6"
+                data-anchor-x-mobile="38.31" data-anchor-y-mobile="53.54">
                 <div class="plot-brand__upright">
                     <span class="plot-brand__dot" aria-hidden="true"></span>
                     <div class="plot-brand__body">

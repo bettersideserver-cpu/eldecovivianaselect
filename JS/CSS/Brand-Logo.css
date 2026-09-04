@@ -218,7 +218,9 @@
 @media (max-width: 768px) and (orientation: portrait) {
     :root {
         --brand-counter: calc(-1 * var(--map-rotate, 90deg));
-        --brand-logo-w: 112px;
+        /* 110px = 112 * 0.98 — requested 2% reduction, mobile only.
+           Desktop (158px) and tablet (132px) are deliberately unchanged. */
+        --brand-logo-w: 110px;
         --brand-gap: 20px;
         --brand-plate-pad-x: 10px;
         --brand-plate-pad-y: 8px;
@@ -244,7 +246,8 @@
    the address card completely and keeps dot -> line -> logo visually joined. */
 @media (max-width: 380px) and (orientation: portrait) {
     :root {
-        --brand-logo-w: 96px;
+        /* 94px = 96 * 0.98 — same 2% reduction as the block above */
+        --brand-logo-w: 94px;
         --brand-gap: 16px;
         --brand-plate-pad-x: 9px;
         --brand-plate-pad-y: 7px;
