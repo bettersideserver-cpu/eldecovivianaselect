@@ -2,11 +2,22 @@
 // ================================================================
 // Companion to JS/CSS/Map-Rotate.css
 //
-// Job 1: keep --vw / --vh in sync with the REAL viewport.
-//        On mobile, 100vh is the wrong number — it includes the area
-//        behind the browser's collapsing address bar, so a vh-sized
-//        rotated frame gets clipped. window.innerHeight (or
-//        visualViewport.height) is the honest value.
+// Job 1: keep --vw / --vh in sync with the REAL viewport — but ONLY on
+//        browsers without dvh support.
+//
+//        Three ways to measure a mobile viewport, and two are traps:
+//          100vh                 - excludes browser chrome, so the frame
+//                                  overflows behind the toolbar.
+//          visualViewport.height - SHRINKS while the toolbar is visible, so
+//                                  the frame is sized to the small slice and
+//                                  leaves dead space once the toolbar hides.
+//                                  This caused the uneven bottom gap.
+//          100dvh                - the browser keeps it correct across
+//                                  toolbar show/hide on its own. Correct.
+//
+//        So when dvh is supported we set NOTHING and let Map-Rotate.css's
+//        @supports block own --vw/--vh. Writing them here would defeat it:
+//        these are inline styles on :root and would beat the stylesheet.
 //
 // Job 2: after the frame resizes, tell DotPin.js to re-measure.
 //        DotPin already listens for `resize`, so one synthetic event
@@ -17,10 +28,18 @@
 
     var root = document.documentElement;
 
+    // Feature-detect once. When true, CSS handles sizing entirely.
+    var HAS_DVH = !!(window.CSS && CSS.supports && CSS.supports("height", "100dvh"));
+
     function syncViewportVars() {
-        var vv = window.visualViewport;
-        var w = Math.round((vv && vv.width) || window.innerWidth || root.clientWidth);
-        var h = Math.round((vv && vv.height) || window.innerHeight || root.clientHeight);
+        // dvh-capable browser: leave --vw/--vh to the CSS @supports block.
+        if (HAS_DVH) return;
+
+        // Legacy fallback. innerWidth/innerHeight are the LAYOUT viewport and
+        // stay stable as the toolbar collapses; visualViewport is deliberately
+        // NOT used here because it tracks the shrinking visible slice.
+        var w = Math.round(window.innerWidth || root.clientWidth);
+        var h = Math.round(window.innerHeight || root.clientHeight);
 
         root.style.setProperty("--vw", w + "px");
         root.style.setProperty("--vh", h + "px");

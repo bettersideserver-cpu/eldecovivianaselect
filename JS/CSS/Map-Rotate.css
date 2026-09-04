@@ -48,7 +48,33 @@
     /* Uniform shrink for pin logos + labels on mobile. The artwork is authored
        for a ~1440px-wide map; on a 390px screen it needs to come right down.
        One knob scales the logo, the label and their offsets together. */
---pin-mobile-scale: 0.5;
+    --pin-mobile-scale: 0.5;
+
+    /* Fallbacks only. JS/MapRotate.js overwrites these with real pixel values
+       on browsers that lack dvh support (see the @supports block below). */
+    --vw: 100vw;
+    --vh: 100vh;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   VIEWPORT UNITS — the Chrome/Safari toolbar problem
+
+   100vh is the viewport WITHOUT browser chrome, so it overflows behind
+   the toolbar. visualViewport.height is the opposite: it shrinks while
+   the toolbar is showing, so sizing to it leaves dead space once the
+   toolbar auto-hides on scroll. That mismatch is what produced the
+   uneven cream gap at the bottom in both browsers.
+
+   100dvh is the DYNAMIC viewport height — the browser keeps it correct
+   across toolbar show/hide by itself, which is exactly what we want and
+   needs no JS at all. Supported in current Chrome, Safari and Firefox.
+   MapRotate.js detects this and stands down when it is available.
+   ────────────────────────────────────────────────────────────────── */
+@supports (height: 100dvh) {
+    :root {
+        --vw: 100dvw;
+        --vh: 100dvh;
+    }
 }
 
 /* ──────────────────────────────────────────────────────────────────
@@ -87,16 +113,19 @@
         /* Swapped on purpose: the frame's WIDTH becomes the on-screen HEIGHT
            once it is rotated 90deg.
 
-           Sized to the map's exact aspect ratio (--map-ar) and clamped to the
-           rotated viewport, so the whole map still fits with no zoom AND the
-           image box carries no letterbox. The two min() branches cover both
-           cases: width-limited (normal phones) and height-limited (very
-           narrow/tall viewports).
+           Sized to the map's exact aspect ratio (--map-ar) so the image box
+           carries NO letterbox. This is load-bearing: pins, the route SVG and
+           the .Cutout outline are all percentages of this box, so an
+           off-ratio box silently stretches and offsets all three.
 
-           390 x 844 -> frame 765.2 x 390 (ratio 1.962), drawn on screen as
-           390 wide x 765.2 tall, centred with ~39px bars top and bottom. */
-        width: min(calc(var(--vw, 100vw) * var(--map-ar)), var(--vh, 100vh));
-        height: min(var(--vw, 100vw), calc(var(--vh, 100vh) / var(--map-ar)));
+           max() = FILL the screen (map's short axis crops ~4.7% per side).
+           min() = FIT the whole map (leaves ~39px bars top and bottom).
+           Swap the two max() for min() to go back to fit-whole-map.
+
+           390 x 844 -> frame 844 x 430, drawn as 430 wide x 844 tall,
+           so height is exact and 20px is clipped off each side. */
+        width: max(calc(var(--vw, 100vw) * var(--map-ar)), var(--vh, 100vh));
+        height: max(var(--vw, 100vw), calc(var(--vh, 100vh) / var(--map-ar)));
         transform: translate(-50%, -50%) rotate(var(--map-rotate));
         transform-origin: 50% 50%;
         will-change: transform;
