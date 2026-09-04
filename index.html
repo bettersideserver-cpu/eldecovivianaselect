@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Eldeco Viviana Select</title>
     <link rel="stylesheet" href="wbn05d6fbh.css">
+    
     <link rel="stylesheet" href="JS/CSS/Floor-Hint.css">
     <link rel="stylesheet" href="JS/Notification/UI_Hint-CSS.css">
     <link rel="stylesheet" href="JS/DotPinCSS.css">
+    <link rel="stylesheet" href="JS/CSS/Map-Rotate.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -1983,6 +1985,15 @@
 
 
     <!-- ═══ MAIN IMAGE + TOWERS (preserved) ═══ -->
+    <!-- ═══════════════════════════════════════════════════════════
+         MOBILE VERTICAL MAP
+         .map-rotate-stage / .map-rotate-frame rotate the map image, the
+         dot-pin logo layer and the .Cutout SVG together as one unit on
+         mobile portrait. On desktop both wrappers are `display: contents`
+         so they have zero effect. See JS/CSS/Map-Rotate.css
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="map-rotate-stage">
+      <div class="map-rotate-frame">
     <div class="Front">
         <div class="image-wrapper">
             <img id="mainImage" src="Map.jpg" data-full="Map.jpg" alt="Tower_2" fetchpriority="high" decoding="async"
@@ -1991,15 +2002,17 @@
             <div id="dotPinLayer" class="dot-pin-layer" aria-hidden="false"></div>
             <div class="Cutout">
                 <svg viewBox="0 0 8192 4175" xmlns="http://www.w3.org/2000/svg">
-                    <path id="Eldeco Viviana Select" data-link="zoommap.html"
+                    <path id="Eldeco Viviana Select" class="st0" data-link="zoommap.html"
                         d="M1044.67,2814.5l41.5-19.33-9-19.5,67.83-35.17-1.17-3.5,18.17-8.67-37-72.67,159-77.33,40.33,81.83,187.83-93.33-10-120.67-143.5,87.17-4.17-2.06-2-8.56-3-3.92-3.83-8.06-.11-5.61-7.17-13-1-6.83-4.33-3.83.11-7.39-6-7.67-4.61-2.72-2.5-6.28-5-3.61-2.33-5.39-4.44-5.06c-73.68,50.54-149.83,94.2-229.39,128.39l-28.5-57.67,46.17-25.67-31.5-66c19.6-8.12,38.14-16.91,55.17-26.67-15.59-37.9-36.6-82.53-60.17-130.33l-3,2.17-2-5.33c-88.97,61.78-160.27,98.52-219.5,118.17l-75.67-152.33,17-3.5-.83-2.67c-46.34,5.41-86.75,13.66-111.67,29.33,30.44,22.53,102.81,120.36,127.83,141.17l-21.86,10.67c27.84,25.99,56.32,65.94,85,110.17l105.56,155.11c30.54,43.35,58.28,92.42,83.75,146.14Z" />
-                    class="st0" />
-
                 </svg>
             </div>
         </div>
     </div>
+      </div>
+    </div>
+    <!-- ═══ /MOBILE VERTICAL MAP ═══ -->
 
+    <script src="JS/MapRotate.js"></script>
     <script src="JS/DotPin.js"></script>
     <script src="JS/CutoutPath.js"></script>
     <script src="JS/Notification/UI_Hint.js"></script>
