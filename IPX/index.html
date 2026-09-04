@@ -8,6 +8,20 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
+:root {
+  /* ...existing --eld-* vars... */
+  --eld-canvas: #F4F7F5;
+  --eld-ink-2: #3C4B42;
+  --eld-gold-ln: #C8D6CC;
+}
+    :root {
+  --eld-green: #16803D;
+  --eld-green-dk: #0E5C2C;
+  --eld-green-lt: #E7F4EC;
+  --eld-ink: #14231A;
+  --eld-muted: #5B6B61;
+  --eld-line: #E1E8E3;
+}
     /* =====================================
        RESET
     ===================================== */
@@ -343,374 +357,933 @@
     /* =====================================
        PLAN MODAL - opens on unit click
     ===================================== */
-    #planModal {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      background: rgba(8, 8, 10, .92);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
+   /* =====================================================================
+   PLAN MODAL / HOLD / AVAILABILITY — white + green theme
+   Drop-in replacement. Selectors and breakpoints unchanged.
+   Palette: #16803D green · #0E5C2C dark green · #E7F4EC tint
+            #14231A ink · #5B6B61 muted · #E1E8E3 line · #F4F7F5 canvas
+   ===================================================================== */
 
-    #planModal.open {
-      display: flex;
-      flex-direction: column;
-    }
+/* =====================================================================
+   PLAN MODAL / HOLD / AVAILABILITY — white + green theme
+   Drop-in replacement. Selectors and breakpoints unchanged.
+   Palette: #16803D green · #0E5C2C dark green · #E7F4EC tint
+            #14231A ink · #5B6B61 muted · #E1E8E3 line · #F4F7F5 canvas
+   ===================================================================== */
 
-    .planModal-bar {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
-      color: #fff;
-    }
+#planModal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  background: rgba(20, 35, 26, .55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
-    .planModal-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: .2px;
-      white-space: nowrap;
-    }
+#planModal.open {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
 
-    .planModal-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 12px;
-    }
+/* ---------- top bar ---------- */
+.planModal-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  color: #14231A;
+  background: #fff;
+  border-bottom: 1px solid #E1E8E3;
+  box-shadow: 0 1px 3px rgba(20, 35, 26, .05);
+}
 
-    .planModal-meta span {
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .1);
-      border: 1px solid rgba(255, 255, 255, .14);
-      white-space: nowrap;
-    }
+.planModal-title {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  color: #0E5C2C;
+}
 
-    #planModalClose {
-      margin-left: auto;
-      width: 40px;
-      height: 40px;
-      flex: 0 0 auto;
-      border: 0;
-      border-radius: 50%;
-      background: #fff;
-      color: #111;
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-    }
+/* green accent tick before the plot number */
+.planModal-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  margin-right: 10px;
+  vertical-align: -2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #16803D, #0E5C2C);
+}
 
-    .planModal-body {
-      flex: 1 1 auto;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 18px 18px;
-    }
+.planModal-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  font-size: 12px;
+}
 
-    #planModalImg {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .55);
-    }
+.planModal-meta span {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: #F4F7F5;
+  border: 1px solid #E1E8E3;
+  color: #14231A;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
-    @media (max-width: 768px) {
-      .planModal-bar {
-        padding: 10px 12px;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
+#planModalClose {
+  margin-left: 12px;
+  order: 99;                     /* always last, sits beside Hold button */
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E1E8E3;
+  border-radius: 10px;
+  background: #fff;
+  color: #5B6B61;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
 
-      .planModal-title {
-        font-size: 14px;
-      }
+#planModalClose:hover {
+  background: #E7F4EC;
+  color: #0E5C2C;
+  border-color: #16803D;
+}
 
-      .planModal-meta {
-        font-size: 11px;
-      }
+#planModalClose:focus-visible {
+  outline: 2px solid #16803D;
+  outline-offset: 2px;
+}
 
-      .planModal-meta span {
-        padding: 4px 8px;
-      }
+/* ---------- image stage ---------- */
+.planModal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px 18px;
+  background: radial-gradient(120% 90% at 50% 0%, #FBFDFC 0%, #F4F7F5 60%, #EDF2EE 100%);
+}
 
-      #planModalClose {
-        width: 34px;
-        height: 34px;
-        font-size: 17px;
-      }
+#planModalImg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #E1E8E3;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(20, 35, 26, .16);
+}
 
-      .planModal-body {
-        padding: 0 10px 10px;
-      }
-    }
+@media (max-width: 768px) {
+  .planModal-bar {
+    padding: 10px 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 
+  .planModal-title {
+    font-size: 14px;
+  }
+
+  .planModal-meta {
+    font-size: 11px;
+  }
+
+  .planModal-meta span {
+    padding: 4px 8px;
+  }
+
+  #planModalClose {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+    border-radius: 9px;
+  }
+
+  .planModal-body {
+    padding: 0 10px 10px;
+  }
+}
+
+/* =====================================
+   PLAN MODAL - DESKTOP = HORIZONTAL
+   The unit plan is a portrait drawing (1388 x 2876). On desktop
+   it is rotated 90deg so it reads horizontally and fills ~80% of
+   the screen. max-width/max-height are SWAPPED on purpose: after
+   the rotation the element's width runs down the screen and its
+   height runs across it.
+   Mobile keeps it vertical (rule: horizontal desktop / vertical mobile).
+===================================== */
+@media (min-width: 769px) {
+  #planModalImg {
+    max-width: 80vh;
+    /* becomes screen HEIGHT after rotate */
+    max-height: 80vw;
+    /* becomes screen WIDTH  after rotate */
+    transform: rotate(90deg);
+  }
+}
+
+/* =====================================
+   ROOM BUTTONS
+===================================== */
+.planModal-rooms {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 14px 18px 16px;
+  background: #F4F7F5;
+  border-top: 1px solid #E1E8E3;
+}
+
+.roomBtn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+
+  padding: 8px 14px;
+  border: 1px solid #E1E8E3;
+  border-radius: 10px;
+  background: #fff;
+  color: #14231A;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(20, 35, 26, .05);
+  transition: background .18s ease, border-color .18s ease,
+              color .18s ease, transform .15s ease, box-shadow .18s ease;
+}
+
+.roomBtn small {
+  font-size: 10px;
+  font-weight: 500;
+  color: #5B6B61;
+  opacity: 1;
+}
+
+.roomBtn:hover {
+  background: #E7F4EC;
+  border-color: #16803D;
+  color: #0E5C2C;
+  transform: translateY(-1px);
+}
+
+.roomBtn:hover small {
+  color: #0E5C2C;
+  opacity: .8;
+}
+
+.roomBtn:focus-visible {
+  outline: 2px solid #16803D;
+  outline-offset: 2px;
+}
+
+.roomBtn.active {
+  background: linear-gradient(180deg, #16803D, #0E5C2C);
+  border-color: #0E5C2C;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(14, 92, 44, .28);
+}
+
+.roomBtn.active small {
+  color: #fff;
+  opacity: .8;
+}
+
+@media (max-width: 768px) {
+  .planModal-rooms {
+    gap: 6px;
+    padding: 10px 10px 12px;
+  }
+
+  .roomBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 8px;
+  }
+
+  .roomBtn small {
+    font-size: 9px;
+  }
+}
+
+/* popups */
+#popupContainer .card,
+#popupContainer .overlay>div,
+.card {
+  width: min(420px, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+
+/* Request to Hold */
+#requestHoldBtn {
+  flex: 0 0 auto;
+  margin-left: auto;             /* groups it with the close button */
+  padding: 10px 18px;
+  border: 1px solid #0E5C2C;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #16803D, #0E5C2C);
+  color: #fff;
+  font: 800 13px Arial, sans-serif;
+  letter-spacing: .02em;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(14, 92, 44, .24);
+  transition: filter .18s ease, transform .15s ease, box-shadow .18s ease;
+}
+
+#requestHoldBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(14, 92, 44, .3);
+}
+
+#requestHoldBtn:focus-visible {
+  outline: 2px solid #16803D;
+  outline-offset: 2px;
+}
+
+#requestHoldBtn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+#holdConfirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 35, 26, .5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#holdConfirmOverlay.open {
+  display: flex;
+}
+
+.hold-confirm-card {
+  width: min(430px, 90vw);
+  background: #fff;
+  color: #14231A;
+  border: 1px solid #E1E8E3;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 24px 70px rgba(20, 35, 26, .25);
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* green accent bar at the top of the card */
+.hold-confirm-card::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 4px;
+  margin: 0 auto 16px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #16803D, #0E5C2C);
+}
+
+.hold-confirm-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #0E5C2C;
+}
+
+.hold-confirm-card p {
+  margin: 0 0 20px;
+  color: #5B6B61;
+  line-height: 1.5;
+}
+
+.hold-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hold-confirm-actions button {
+  min-width: 100px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  border: 1px solid #E1E8E3;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease,
+              border-color .18s ease, filter .18s ease, transform .15s ease;
+}
+
+.hold-confirm-actions button:focus-visible {
+  outline: 2px solid #16803D;
+  outline-offset: 2px;
+}
+
+#holdYesBtn {
+  background: linear-gradient(180deg, #16803D, #0E5C2C);
+  color: #fff;
+  border-color: #0E5C2C;
+  box-shadow: 0 2px 10px rgba(14, 92, 44, .22);
+}
+
+#holdYesBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+#holdNoBtn {
+  background: #fff;
+  color: #5B6B61;
+}
+
+#holdNoBtn:hover {
+  background: #E7F4EC;
+  color: #0E5C2C;
+  border-color: #16803D;
+}
+
+#holdConfirmMsg {
+  min-height: 18px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #b42318;
+}
+
+@media(max-width:768px) {
+  #requestHoldBtn {
+    padding: 8px 11px;
+    font-size: 11px;
+  }
+
+  .hold-confirm-card {
+    padding: 20px;
+  }
+}
+
+/* Availability toggle */
+#availabilityToggle {
+  position: fixed;
+  top: 20px;
+  left: 140px;
+  z-index: 130;
+  padding: 10px 16px;
+  border: 1px solid #E1E8E3;
+  border-radius: 10px;
+  background: #fff;
+  color: #14231A;
+  font: 700 13px Arial, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(20, 35, 26, .12);
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+#availabilityToggle::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  border-radius: 50%;
+  background: #16803D;
+  box-shadow: 0 0 0 3px rgba(22, 128, 61, .16);
+}
+
+#availabilityToggle:hover {
+  background: #E7F4EC;
+  border-color: #16803D;
+  color: #0E5C2C;
+}
+
+#availabilityToggle.off {
+  background: #14231A;
+  color: #fff;
+  border-color: #14231A;
+}
+
+#availabilityToggle.off::before {
+  background: #8A9990;
+  box-shadow: 0 0 0 3px rgba(138, 153, 144, .2);
+}
+
+#legend.availability-hidden {
+  display: none !important
+}
+
+@media(max-width:768px) {
+  #availabilityToggle {
+    top: 8px;
+    left: 105px;
+    padding: 7px 11px;
+    font-size: 11px
+  }
+}
+  </style>
+
+  <style>
     /* =====================================
-       PLAN MODAL - DESKTOP = HORIZONTAL
-       The unit plan is a portrait drawing (1388 x 2876). On desktop
-       it is rotated 90deg so it reads horizontally and fills ~80% of
-       the screen. max-width/max-height are SWAPPED on purpose: after
-       the rotation the element's width runs down the screen and its
-       height runs across it.
-       Mobile keeps it vertical (rule: horizontal desktop / vertical mobile).
+       TOP BAR - back + availability + legend
+       Replaces the old bare-text legend and the plain white toggle.
+       Loaded last, so it wins over the positioning rules above.
     ===================================== */
-    @media (min-width: 769px) {
-      #planModalImg {
-        max-width: 80vh;
-        /* becomes screen HEIGHT after rotate */
-        max-height: 80vw;
-        /* becomes screen WIDTH  after rotate */
-        transform: rotate(90deg);
-      }
-    }
+#eldTopBar {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 28px);
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+}
 
+ .eld-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--eld-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .94);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 8px 26px rgba(10, 40, 22, .16), 0 1px 2px rgba(10, 40, 22, .08);
+}
+.eld-div {
+  width: 1px;
+  height: 22px;
+  flex: 0 0 auto;
+  background: var(--eld-line);
+}
+
+
+    /* ---------- back button ---------- */
+.eld-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px 0 10px;
+  border: 1px solid var(--eld-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--eld-ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .15s ease;
+}
+
+  .eld-back svg { flex: 0 0 auto; transition: transform .18s ease }
+
+.eld-back:hover {
+  background: var(--eld-green-lt);
+  border-color: var(--eld-green);
+  color: var(--eld-green-dk);
+  transform: translateY(-1px);
+}
+
+.eld-back:hover svg { transform: translateX(-2px) }
+.eld-back:active { transform: none }
+
+.eld-back:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(22, 128, 61, .25);
+}
+    /* ---------- availability toggle ---------- */
+/* ---------- availability toggle ---------- */
+#availabilityToggle {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px !important;
+  border: 1px solid var(--eld-green) !important;
+  border-radius: 10px !important;
+  background: var(--eld-green) !important;
+  color: #fff !important;
+  font: 600 13px/1 "Inter", "Segoe UI", Arial, sans-serif !important;
+  letter-spacing: .2px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(22, 128, 61, .28) !important;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .15s ease;
+}
+
+   #availabilityToggle::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .3);
+  transition: background .18s ease, box-shadow .18s ease;
+}
+
+#availabilityToggle:hover {
+  background: var(--eld-green-dk) !important;
+  border-color: var(--eld-green-dk) !important;
+  transform: translateY(-1px);
+}
+
+#availabilityToggle.off {
+  border-color: var(--eld-line) !important;
+  background: #fff !important;
+  color: var(--eld-muted) !important;
+  box-shadow: none !important;
+}
+
+#availabilityToggle.off::before {
+  background: #A9B5AE;
+  box-shadow: 0 0 0 3px rgba(169, 181, 174, .22);
+}
+
+#availabilityToggle:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(22, 128, 61, .3) !important;
+}
+
+/* ---------- legend ---------- */
+#legend {
+  display: flex !important;
+  align-items: center;
+  gap: 6px !important;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--eld-ink);
+}
+
+#legend > span {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--eld-line);
+  border-radius: 10px;
+  background: #F7FAF8;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  color: var(--eld-ink);
+}
+
+/* keep the inline status colour, restyle the shape only */
+#legend > span > i {
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 2.5px rgba(10, 40, 22, .07);
+}
+
+#legend:empty { display: none !important }
+.eld-legend:has(#legend:empty) { display: none }
+.eld-legend:has(#legend.availability-hidden) { display: none }
+
+#timer { display: none !important }
+
+/* ---------- responsive ---------- */
+@media (max-width: 768px) {
+  #eldTopBar { top: 10px; left: 10px; gap: 7px; max-width: calc(100vw - 20px) }
+  .eld-panel { padding: 5px 7px; gap: 6px; border-radius: 12px }
+  .eld-back { height: 30px; padding: 0 9px; font-size: 12px }
+  .eld-back span { display: none }
+  #availabilityToggle { height: 30px; padding: 0 11px !important; font-size: 11.5px !important }
+  #legend > span { height: 30px; padding: 0 9px; font-size: 11px }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  #eldTopBar { top: 8px; left: 8px }
+  .eld-panel { padding: 4px 6px }
+  .eld-back,
+  #availabilityToggle,
+  #legend > span { height: 28px }
+}
+  </style>
+
+  <style>
     /* =====================================
-       ROOM BUTTONS
+       WALKTHROUGH PLAYER - bottom centre
+       Play/pause toggle + progress slider. Hitting play, or touching
+       the slider, sends the visitor to the next page. Change
+       NEXT_PAGE_URL in the script at the bottom of this file.
     ===================================== */
-    .planModal-rooms {
-      flex: 0 0 auto;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 0 18px 14px;
-    }
+   /* =====================================
+   WALKTHROUGH PLAYER - white + green
+===================================== */
+#eldPlayer {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px 9px 10px;
+  border: 1px solid var(--eld-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .95);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: 0 14px 38px rgba(10, 40, 22, .2), 0 1px 2px rgba(10, 40, 22, .08);
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+  max-width: calc(100vw - 28px);
+}
 
-    .roomBtn {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2px;
+#eldPlayer.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+  transition: opacity .25s ease, transform .25s ease;
+}
 
-      padding: 8px 14px;
-      border: 1px solid rgba(255, 255, 255, .18);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, .07);
-      color: #fff;
+/* ---------- play / pause ---------- */
+#eldPlayBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #1C9349 0%, var(--eld-green) 55%, var(--eld-green-dk) 100%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(22, 128, 61, .34);
+  transition: transform .16s ease, box-shadow .18s ease, background .2s ease;
+}
 
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.2;
+#eldPlayBtn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(22, 128, 61, .45);
+}
 
-      cursor: pointer;
-      transition: background .18s ease, border-color .18s ease, transform .15s ease;
-    }
+#eldPlayBtn:active { transform: scale(.97) }
 
-    .roomBtn small {
-      font-size: 10px;
-      font-weight: 500;
-      opacity: .7;
-    }
+#eldPlayBtn:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 4px rgba(22, 128, 61, .3);
+}
 
-    .roomBtn:hover {
-      background: rgba(255, 215, 0, .18);
-      border-color: #FFD700;
-      transform: translateY(-1px);
-    }
+#eldPlayBtn .ico-pause { display: none }
+#eldPlayBtn.playing .ico-play { display: none }
+#eldPlayBtn.playing .ico-pause { display: block }
 
-    .roomBtn.active {
-      background: #FFD700;
-      border-color: #FFD700;
-      color: #111;
-    }
+#eldPlayBtn.playing {
+  background: var(--eld-green-lt);
+  color: var(--eld-green-dk);
+  box-shadow: none;
+}
 
-    .roomBtn.active small {
-      opacity: .75;
-    }
+/* ---------- label ---------- */
+#eldPlayer .eldp-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  color: var(--eld-ink);
+  white-space: nowrap;
+}
 
-    @media (max-width: 768px) {
-      .planModal-rooms {
-        gap: 6px;
-        padding: 0 10px 10px;
-      }
+#eldPlayer .eldp-label small {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--eld-muted);
+}
 
-      .roomBtn {
-        padding: 6px 10px;
-        font-size: 11px;
-        border-radius: 8px;
-      }
+/* ---------- slider ---------- */
+#eldSeek {
+  --eldp-progress: 0%;
+  width: 240px;
+  height: 22px;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
-      .roomBtn small {
-        font-size: 9px;
-      }
-    }
+#eldSeek:focus { outline: 0 }
 
-    /* popups */
-    #popupContainer .card,
-    #popupContainer .overlay>div,
-    .card {
-      width: min(420px, 92vw);
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 16px 18px;
-    }
+#eldSeek::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, var(--eld-green) var(--eldp-progress), #E3EAE5 var(--eldp-progress));
+}
 
-    /* Request to Hold */
-    #requestHoldBtn {
-      flex: 0 0 auto;
-      padding: 10px 16px;
-      border: 0;
-      border-radius: 10px;
-      background: #FFD700;
-      color: #111;
-      font: 800 13px Arial, sans-serif;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .22);
-    }
+#eldSeek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-top: -5px;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  background: var(--eld-green);
+  box-shadow: 0 2px 7px rgba(10, 40, 22, .3);
+  transition: transform .15s ease;
+}
 
-    #requestHoldBtn:hover {
-      transform: translateY(-1px);
-    }
+#eldSeek:hover::-webkit-slider-thumb,
+#eldSeek:focus-visible::-webkit-slider-thumb { transform: scale(1.18) }
 
-    #requestHoldBtn:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-      transform: none;
-    }
+#eldSeek::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: #E3EAE5;
+}
 
-    #holdConfirmOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 20000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, .58);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
+#eldSeek::-moz-range-progress {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--eld-green);
+}
 
-    #holdConfirmOverlay.open {
-      display: flex;
-    }
+#eldSeek::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  background: var(--eld-green);
+  box-shadow: 0 2px 7px rgba(10, 40, 22, .3);
+}
 
-    .hold-confirm-card {
-      width: min(430px, 90vw);
-      background: #fff;
-      color: #111;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, .35);
-      text-align: center;
-      font-family: Arial, sans-serif;
-    }
+#eldPlayer .eldp-time {
+  flex: 0 0 auto;
+  min-width: 34px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--eld-muted);
+  text-align: right;
+}
 
-    .hold-confirm-card h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
+/* ---------- responsive ---------- */
+@media (max-width: 768px) {
+  #eldPlayer { bottom: 16px; gap: 9px; padding: 7px 13px 7px 8px }
+  #eldPlayBtn { width: 36px; height: 36px }
+  #eldSeek { width: 130px }
+  #eldPlayer .eldp-label small { display: none }
+}
 
-    .hold-confirm-card p {
-      margin: 0 0 20px;
-      color: #666;
-      line-height: 1.5;
-    }
-
-    .hold-confirm-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .hold-confirm-actions button {
-      min-width: 100px;
-      padding: 11px 18px;
-      border-radius: 9px;
-      border: 1px solid #ddd;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    #holdYesBtn {
-      background: #111;
-      color: #fff;
-      border-color: #111;
-    }
-
-    #holdNoBtn {
-      background: #fff;
-      color: #111;
-    }
-
-    #holdConfirmMsg {
-      min-height: 18px;
-      margin-top: 12px;
-      font-size: 12px;
-      color: #b42318;
-    }
-
-    @media(max-width:768px) {
-      #requestHoldBtn {
-        padding: 8px 11px;
-        font-size: 11px;
-      }
-
-      .hold-confirm-card {
-        padding: 20px;
-      }
-    }
-
-    /* Availability toggle */
-    #availabilityToggle {
-      position: fixed;
-      top: 20px;
-      left: 140px;
-      z-index: 130;
-      padding: 10px 16px;
-      border: 0;
-      border-radius: 10px;
-      background: #fff;
-      color: #111;
-      font: 700 13px Arial, sans-serif;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, .22)
-    }
-
-    #availabilityToggle.off {
-      background: rgba(0, 0, 0, .72);
-      color: #fff
-    }
-
-    #legend.availability-hidden {
-      display: none !important
-    }
-
-    @media(max-width:768px) {
-      #availabilityToggle {
-        top: 8px;
-        left: 105px;
-        padding: 7px 11px;
-        font-size: 11px
-      }
-    }
+@media (orientation: landscape) and (max-height: 500px) {
+  #eldPlayer { bottom: 10px; padding: 5px 11px 5px 6px; gap: 8px }
+  #eldPlayBtn { width: 32px; height: 32px }
+  #eldSeek { width: 120px }
+  #eldPlayer .eldp-label small { display: none }
+}
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>Interactive Floor Plan</h1>
-    <div id="legend"></div>
-  </header>
+  <div id="eldTopBar">
 
-  <div id="timer">00:00</div>
-  <button id="availabilityToggle" type="button" aria-pressed="true">Availability ON</button>
+    <div class="eld-panel">
+      <a href="../index.html" id="eldBackBtn" class="eld-back" aria-label="Go back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+        <span>Back</span>
+      </a>
+
+      <span class="eld-div"></span>
+
+      <button id="availabilityToggle" type="button" aria-pressed="true">Availability ON</button>
+    </div>
+
+    <div class="eld-panel eld-legend">
+      <div id="legend"></div>
+    </div>
+
+  </div>
+
+  <!-- tooltip stays outside the bar: it is position:fixed and follows the cursor -->
   <div id="tooltip"></div>
+
+
+  <!-- =====================================
+       WALKTHROUGH PLAYER - bottom centre
+  ====================================== -->
+  <div id="eldPlayer" role="group" aria-label="Walkthrough player">
+
+    <button id="eldPlayBtn" type="button" aria-label="Play walkthrough">
+      <svg class="ico-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z" />
+      </svg>
+      <svg class="ico-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <rect x="6" y="5" width="4" height="14" rx="1.2" />
+        <rect x="14" y="5" width="4" height="14" rx="1.2" />
+      </svg>
+    </button>
+
+    <div class="eldp-label">
+      Walkthrough
+      <small>Viviana Select</small>
+    </div>
+
+    <input id="eldSeek" type="range" min="0" max="100" value="0" step="1" aria-label="Walkthrough progress">
+
+    <div class="eldp-time" id="eldSeekTime">00:00</div>
+
+  </div>
 
   <div class="floor-container">
     <div class="floor-stage">
 
       <!-- Floor plan image: must be 3840 x 2160 (16:9) so it matches the SVG viewBox -->
-      <img src="Top-Render-4k.png" id="floorImage" alt="Floor Plan">
+      <img src="Map.jpg" id="floorImage" alt="Floor Plan">
 
       <!-- SVG overlay -->
       <svg id="floorSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 4609" preserveAspectRatio="none">
@@ -770,8 +1343,8 @@
         <path id="172" class="unit" data-unit="172" d="M3358.56 1765.96v496.37h180.67v-496.37s-181.15.48-180.67 0" />
         <path id="169" class="unit" data-unit="169" d="M3723.22 1032.33h173v520h-173z" />
         <path id="168" class="unit" data-unit="168" d="M3539.22 1032.33h184v520h-184z" />
-        <path id="167" class="unit" data-unit="1617"
-          d="m1710.26 421.56-3.56 296h-92.44s9.33-34.67-10.67-35.11l-2.22-30.22s21.78-32.44 0-41.33v-28.89s26.22-22.22 1.78-43.56l-1.78-35.11s29.78-26.67 2.22-46.67l-2.22-24.44s11.11-5.78 10.22-10.67z" />
+        <!-- <path id="167" class="unit" data-unit="1617"
+          d="m1710.26 421.56-3.56 296h-92.44s9.33-34.67-10.67-35.11l-2.22-30.22s21.78-32.44 0-41.33v-28.89s26.22-22.22 1.78-43.56l-1.78-35.11s29.78-26.67 2.22-46.67l-2.22-24.44s11.11-5.78 10.22-10.67z" /> -->
         <path id="146" class="unit" data-unit="146" d="M2989.56 1765.96h164.67V2251h-164.67z" />
         <path id="147" class="unit" data-unit="147" d="M2827.56 1765.96h162V2251h-162z" />
         <path id="148" class="unit" data-unit="148" d="M2664.22 1765.96h163.33V2251h-163.33z" />
@@ -868,6 +1441,40 @@
   </script>
 
   <script>
+    /* ============================================================
+       PROPERTY TYPE
+       4-floor apartment plots open the dedicated apartment page.
+       All other plots continue using the existing floor-plan modal.
+
+       Current 4-floor apartment plots are the plots whose existing
+       unit data is marked TBD:
+       157-169.
+       Edit this single list when the plot mix changes.
+    ============================================================ */
+    window.PROPERTY_TYPES = {
+      fourFloorApartment: new Set([
+        "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169"
+      ]),
+      singleHouse: "singleHouse",
+      fourFloorApartmentLabel: "4 Floor Apartment",
+      singleHouseLabel: "Single House",
+      fourFloorApartmentUrl: "4-floor.html"
+    };
+
+    function getPropertyType(plotNumber) {
+      return window.PROPERTY_TYPES.fourFloorApartment.has(String(plotNumber))
+        ? "fourFloorApartment"
+        : window.PROPERTY_TYPES.singleHouse;
+    }
+
+    function getPropertyTypeLabel(plotNumber) {
+      return getPropertyType(plotNumber) === "fourFloorApartment"
+        ? window.PROPERTY_TYPES.fourFloorApartmentLabel
+        : window.PROPERTY_TYPES.singleHouseLabel;
+    }
+  </script>
+
+  <script>
     /* Robust unit hover tooltip */
     (function () {
       const svg = document.getElementById("floorSVG");
@@ -897,8 +1504,10 @@
         const d = (window.unitDetails && (window.unitDetails[number] || window.unitDetails[unit.id])) || {};
         const status = unit.dataset.status || d.status || "Available";
         const availabilityOn = document.getElementById("availabilityToggle")?.getAttribute("aria-pressed") !== "false";
+        const propertyTypeLabel = getPropertyTypeLabel(number);
         tip.innerHTML =
-          '<div class="unit-tip-title">Unit ' + esc(number) + '</div>' +
+          '<div class="unit-tip-title">Plot ' + esc(number) + '</div>' +
+          '<div class="unit-tip-row"><span>Type</span><b>' + esc(propertyTypeLabel) + '</b></div>' +
           '<div class="unit-tip-row"><span>Length</span><b>' + esc(d.length || "—") + '</b></div>' +
           '<div class="unit-tip-row"><span>Width</span><b>' + esc(d.width || d.breadth || "—") + '</b></div>' +
           '<div class="unit-tip-row"><span>Area</span><b>' + esc(d.totalArea || d.area || "—") + '</b></div>' +
@@ -1009,7 +1618,7 @@
         meta.innerHTML =
           "<span>Total Area: " + details.totalArea + "</span>" +
           "<span>Length: " + details.length + "</span>" +
-          "<span>Breadth: " + details.breadth + "</span>";
+          "<span>Breadth: " + (details.breadth || details.width || "—") + "</span>";
 
         img.src = planFor(details);
         img.alt = (details.unit || "Unit") + " floor plan";
@@ -1059,6 +1668,9 @@
           var payload = {
             unit_number: unitNumber,
             property_name: selectedDetails.unit || ("Plot " + unitNumber),
+            source_type: "single_house",
+            plot_number: unitNumber || null,
+            floor_number: null,
             visitor_name: visitor.name || null,
             visitor_mobile: visitor.mobile || null,
             visitor_email: visitor.email || null,
@@ -1083,6 +1695,17 @@
         if (!unit) return;
 
         var unitNumber = unit.getAttribute("data-unit") || unit.id;
+        var propertyType = getPropertyType(unitNumber);
+
+        // 4-floor apartments use their own page.
+        if (propertyType === "fourFloorApartment") {
+          window.location.href =
+            window.PROPERTY_TYPES.fourFloorApartmentUrl +
+            "?plot=" + encodeURIComponent(unitNumber);
+          return;
+        }
+
+        // Single houses keep the existing floor-plan overlay.
         var details = window.unitDetails[unitNumber] || window.unitDetails[unit.id];
         if (!details) return;
 
@@ -1194,6 +1817,9 @@
 
 
   <style>
+    /* =====================================
+       VISITOR GATE - professional card
+    ===================================== */
     #eldeco-lock {
       position: fixed;
       inset: 0;
@@ -1201,78 +1827,377 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, .55);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px)
+      padding: 24px;
+      background: radial-gradient(120% 120% at 50% 0%, rgba(20, 20, 24, .72) 0%, rgba(8, 8, 10, .88) 100%);
+      backdrop-filter: blur(20px) saturate(120%);
+      -webkit-backdrop-filter: blur(20px) saturate(120%);
+      animation: evFade .35s ease both;
     }
 
-    #eldeco-lock.hidden {
-      display: none
+    #eldeco-lock.hidden { display: none; }
+
+    @keyframes evFade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes evRise {
+      from { opacity: 0; transform: translateY(14px) scale(.985); }
+      to   { opacity: 1; transform: none; }
     }
 
     #eldeco-card {
-      width: min(430px, 92vw);
+      position: relative;
+      width: min(500px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 38px 38px 30px;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 20px;
       background: #fff;
-      color: #111;
-      border-radius: 16px;
-      padding: 26px;
-      box-shadow: 0 25px 80px #0008;
-      font-family: Arial, sans-serif
+      color: #14161a;
+      box-shadow: 0 32px 90px rgba(0, 0, 0, .55), 0 2px 6px rgba(0, 0, 0, .18);
+      font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+      animation: evRise .4s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    /* gold accent bar */
+    #eldeco-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 20px 20px 0 0;
+      background: linear-gradient(90deg, #C9A227 0%, #FFD700 45%, #F5E28B 100%);
+    }
+
+    /* ---------- header ---------- */
+    #eldeco-card .ev-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    #eldeco-card .ev-brand i {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: #14161a;
+      color: #FFD700;
+      font: 800 15px/34px "Inter", Arial, sans-serif;
+      font-style: normal;
+      text-align: center;
+      letter-spacing: -.5px;
+    }
+
+    #eldeco-card .ev-brand span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: #6b7280;
     }
 
     #eldeco-card h2 {
-      margin: 0 0 8px
+      margin: 0 0 7px;
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      line-height: 1.25;
+      color: #14161a;
     }
 
-    #eldeco-card p {
-      color: #666;
-      margin: 0 0 18px
+    #eldeco-card p.ev-sub {
+      margin: 0 0 26px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #6b7280;
+    }
+
+    /* ---------- fields ---------- */
+    #eldeco-card .ev-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    #eldeco-card .ev-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    #eldeco-card .ev-field.ev-full { grid-column: 1 / -1; }
+
+    #eldeco-card label {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .2px;
+      color: #374151;
+    }
+
+    #eldeco-card label em {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    #eldeco-card label b {
+      color: #C9A227;
+      font-weight: 700;
     }
 
     #eldeco-card input {
       width: 100%;
-      padding: 12px;
-      margin: 0 0 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box
+      height: 46px;
+      margin: 0;
+      padding: 0 14px;
+      border: 1px solid #dfe3e8;
+      border-radius: 10px;
+      background: #fafbfc;
+      color: #14161a;
+      font-family: inherit;
+      font-size: 14.5px;
+      box-sizing: border-box;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
     }
 
+    #eldeco-card input::placeholder { color: #aeb4bd; }
+
+    #eldeco-card input:hover { border-color: #c8ced6; }
+
+    #eldeco-card input:focus {
+      outline: 0;
+      background: #fff;
+      border-color: #C9A227;
+      box-shadow: 0 0 0 3.5px rgba(255, 215, 0, .18);
+    }
+
+    /* phone prefix */
+    #eldeco-card .ev-phone { position: relative; }
+
+    #eldeco-card .ev-phone .ev-prefix {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-right: 1px solid #e5e8ec;
+      border-radius: 10px 0 0 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      pointer-events: none;
+    }
+
+    #eldeco-card .ev-phone input { padding-left: 66px; }
+
+    /* ---------- error ---------- */
+    #eldeco-card .err {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #b42318;
+    }
+
+    #eldeco-card .err:empty { display: none; }
+
+    #eldeco-card .err:not(:empty) {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 10px 12px;
+      border: 1px solid #f4c7c3;
+      border-radius: 9px;
+      background: #fef3f2;
+    }
+
+    #eldeco-card .err:not(:empty)::before {
+      content: "!";
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #d92d20;
+      color: #fff;
+      font: 700 12px/17px Arial, sans-serif;
+      text-align: center;
+    }
+
+    /* ---------- submit ---------- */
     #eldeco-card button {
       width: 100%;
-      padding: 12px;
+      height: 50px;
+      margin-top: 22px;
+      padding: 0;
       border: 0;
-      border-radius: 8px;
-      background: #111;
+      border-radius: 11px;
+      background: #14161a;
       color: #fff;
+      font-family: inherit;
+      font-size: 15px;
       font-weight: 700;
-      cursor: pointer
+      letter-spacing: .2px;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .18s ease, background .18s ease;
     }
 
-    #eldeco-card .err {
-      color: #b42318;
-      font-size: 13px;
-      min-height: 18px;
-      margin: 8px 0
+    #eldeco-card button:hover:not(:disabled) {
+      background: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .24);
     }
 
+    #eldeco-card button:active:not(:disabled) {
+      transform: none;
+      box-shadow: none;
+    }
+
+    #eldeco-card button:focus-visible {
+      outline: 0;
+      box-shadow: 0 0 0 3.5px rgba(255, 215, 0, .38);
+    }
+
+    #eldeco-card button:disabled {
+      opacity: .6;
+      cursor: progress;
+      transform: none;
+    }
+
+    /* ---------- footer ---------- */
+    #eldeco-card .ev-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      margin: 18px 0 0;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #9ca3af;
+    }
+
+    #eldeco-card .ev-note svg {
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 560px) {
+      #eldeco-lock {
+        padding: 14px;
+        align-items: flex-start;
+        padding-top: 32px;
+      }
+
+      #eldeco-card {
+        padding: 28px 22px 24px;
+        border-radius: 16px;
+      }
+
+      #eldeco-card h2 { font-size: 20px; }
+
+      #eldeco-card p.ev-sub {
+        margin-bottom: 22px;
+        font-size: 13.5px;
+      }
+
+      #eldeco-card .ev-grid { grid-template-columns: 1fr; }
+
+      #eldeco-card input {
+        height: 48px;
+        font-size: 15px;
+      }
+
+      #eldeco-card .ev-phone .ev-prefix { height: 46px; }
+      #eldeco-card button { height: 50px; }
+    }
+
+    @media (orientation: landscape) and (max-height: 520px) {
+      #eldeco-lock {
+        align-items: flex-start;
+        padding: 12px;
+      }
+
+      #eldeco-card { padding: 20px 22px 18px; }
+      #eldeco-card .ev-brand { margin-bottom: 14px; }
+      #eldeco-card p.ev-sub { margin-bottom: 16px; }
+      #eldeco-card h2 { font-size: 18px; }
+    }
+
+    /* live unit hover */
     .unit-live {
-      transition: fill .15s, stroke .15s, filter .15s
+      transition: fill .15s, stroke .15s, filter .15s;
     }
 
     .unit-live:hover {
-      filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 215, 0, .8))
+      filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 215, 0, .8));
     }
   </style>
-  <div id="eldeco-lock">
+
+  <div id="eldeco-lock" role="dialog" aria-modal="true" aria-labelledby="evTitle">
     <div id="eldeco-card">
-      <h2>Visitor Registration</h2>
-      <p>Please enter your details to access the property.</p>
-      <form id="eldecoVisitorForm"><input id="evName" placeholder="Name" required maxlength="120"><input id="evMobile"
-          placeholder="Mobile number" inputmode="numeric" required><input id="evEmail" type="email"
-          placeholder="Email (optional)"><input id="evCity" placeholder="City">
-        <div id="evErr" class="err"></div><button id="evSubmit">Enter Website</button>
+
+      <div class="ev-brand">
+        <i>EV</i>
+        <span>Eldeco Viviana Select</span>
+      </div>
+
+      <h2 id="evTitle">Welcome - let's get you started</h2>
+      <p class="ev-sub">Share a few details to unlock the interactive site plan, live plot availability and 360&deg;
+        walkthroughs.</p>
+
+      <form id="eldecoVisitorForm" novalidate>
+        <div class="ev-grid">
+
+          <div class="ev-field ev-full">
+            <label for="evName">Full name <b>*</b></label>
+            <input id="evName" name="name" placeholder="e.g. Rohit Sharma" autocomplete="name" required maxlength="120">
+          </div>
+
+          <div class="ev-field ev-full">
+            <label for="evMobile">Mobile number <b>*</b></label>
+            <div class="ev-phone">
+              <span class="ev-prefix">+91</span>
+              <input id="evMobile" name="mobile" placeholder="98765 43210" type="tel" inputmode="numeric"
+                autocomplete="tel" maxlength="15" required>
+            </div>
+          </div>
+
+          <div class="ev-field">
+            <label for="evEmail">Email <em>(optional)</em></label>
+            <input id="evEmail" name="email" type="email" placeholder="you@email.com" autocomplete="email">
+          </div>
+
+          <div class="ev-field">
+            <label for="evCity">City</label>
+            <input id="evCity" name="city" placeholder="Lucknow" autocomplete="address-level2">
+          </div>
+
+        </div>
+
+        <div id="evErr" class="err" role="alert" aria-live="polite"></div>
+
+        <button id="evSubmit" type="submit">Enter Website</button>
+
+        <p class="ev-note">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Your details are used only to assist you with this property and are never shared with third parties.
+        </p>
       </form>
+
     </div>
   </div>
   <script type="module">
@@ -1290,6 +2215,20 @@
     const evEmail = document.getElementById('evEmail');
     const evCity = document.getElementById('evCity');
     const evSubmit = document.getElementById('evSubmit');
+
+    // Keep the visitor unlocked for the lifetime of this browser tab/session.
+    // Refreshing the page must not ask for the form again.
+    try {
+      const savedVisitor = JSON.parse(sessionStorage.getItem('eldecoVisitor') || 'null');
+      if (savedVisitor && savedVisitor.name && savedVisitor.mobile) {
+        lock.classList.add('hidden');
+        document.body.classList.add('eldeco-unlocked');
+        evName.value = savedVisitor.name || '';
+        evMobile.value = savedVisitor.mobile || '';
+        evEmail.value = savedVisitor.email || '';
+        evCity.value = savedVisitor.city || '';
+      }
+    } catch (_) {}
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1382,6 +2321,92 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'status_categories' }, applyInventory)
       .subscribe();
   </script>
+
+  <script>
+    /* =====================================
+       BACK BUTTON
+       Steps back through history when there is history to step
+       through, otherwise falls through to the href on the anchor.
+       Change the href in the markup to point at your landing page.
+    ===================================== */
+    (function () {
+      var back = document.getElementById("eldBackBtn");
+      if (!back) return;
+      back.addEventListener("click", function (e) {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+      });
+    })();
+  </script>
+
+
+  <script>
+    /* =====================================
+       WALKTHROUGH PLAYER BEHAVIOUR
+       Play, or any touch of the slider, navigates to the next page.
+       >>> REPLACE THE DUMMY URL BELOW <<<
+    ===================================== */
+    (function () {
+      var NEXT_PAGE_URL = "video/index.html";   /* dummy - replace with the real page */
+
+      var player = document.getElementById("eldPlayer");
+      var playBtn = document.getElementById("eldPlayBtn");
+      var seek = document.getElementById("eldSeek");
+      var time = document.getElementById("eldSeekTime");
+      var lock = document.getElementById("eldeco-lock");
+      var modal = document.getElementById("planModal");
+      if (!player || !playBtn || !seek) return;
+
+      var navigating = false;
+
+      /* paint the gold fill behind the thumb */
+      function paint() {
+        seek.style.setProperty("--eldp-progress", seek.value + "%");
+        var secs = Math.round(Number(seek.value) * 1.2);   /* 100 steps -> ~2 min */
+        time.textContent =
+          String(Math.floor(secs / 60)).padStart(2, "0") + ":" + String(secs % 60).padStart(2, "0");
+      }
+
+      /* single exit point so play and the slider behave identically */
+      function go(from) {
+        if (navigating) return;
+        navigating = true;
+        playBtn.classList.add("playing");
+        playBtn.setAttribute("aria-label", "Pause walkthrough");
+        console.log("Walkthrough started from:", from, "->", NEXT_PAGE_URL);
+        setTimeout(function () { window.location.href = NEXT_PAGE_URL; }, 220);
+      }
+
+      playBtn.addEventListener("click", function () {
+        /* paused -> play navigates. playing -> pause just stops. */
+        if (playBtn.classList.contains("playing")) {
+          playBtn.classList.remove("playing");
+          playBtn.setAttribute("aria-label", "Play walkthrough");
+          return;
+        }
+        go("play button");
+      });
+
+      seek.addEventListener("input", function () { paint(); go("slider"); });
+      seek.addEventListener("change", function () { paint(); go("slider"); });
+
+      /* keep the bar out of the way of the gate and the plan modal */
+      function sync() {
+        var gateOpen = lock && !lock.classList.contains("hidden");
+        var modalOpen = modal && modal.classList.contains("open");
+        player.classList.toggle("is-hidden", !!(gateOpen || modalOpen));
+      }
+
+      if (lock) new MutationObserver(sync).observe(lock, { attributes: true, attributeFilter: ["class"] });
+      if (modal) new MutationObserver(sync).observe(modal, { attributes: true, attributeFilter: ["class"] });
+
+      paint();
+      sync();
+    })();
+  </script>
+
 </body>
 
 </html>
