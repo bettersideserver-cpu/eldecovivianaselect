@@ -38,16 +38,18 @@
     }
 
     /* =====================================
-       STAGE - COVER MATH
-       The stage keeps the SVG ratio (3840 / 2160) and grows with
-       max() until it covers the viewport on BOTH axes, then it is
-       centred. That is exactly what object-fit: cover does to the
-       image, so image and SVG land on the same pixels at any size.
-       Want the full plan visible instead? swap max() -> min().
+       RESPONSIVE IMAGE STAGE - MATCH REFERENCE FRONT
+       4Floor.png is 2303 x 4096 (portrait).
+
+       Landscape / wider viewport: image uses 100vw and height stays auto.
+       Portrait / taller viewport: image uses 100vh and width stays auto.
+
+       The stage and SVG always use the exact same aspect ratio, so the
+       clickable SVG paths remain pixel-locked to the floor-plan image.
     ===================================== */
     :root {
-      --plan-w: 3840;
-      --plan-h: 2160;
+      --plan-w: 2303;
+      --plan-h: 4096;
     }
 
     .floor-stage {
@@ -55,8 +57,18 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: max(100vw, calc(var(--vh, 1vh) * 100 * (var(--plan-w) / var(--plan-h))));
-      height: max(calc(var(--vh, 1vh) * 100), calc(100vw * (var(--plan-h) / var(--plan-w))));
+      width: 100vw;
+      height: auto;
+      aspect-ratio: var(--plan-w) / var(--plan-h);
+    }
+
+    /* Taller/narrower viewport: fit the image to viewport height,
+       keeping its natural width (exactly like the reference .Front). */
+    @media (max-aspect-ratio: 2303/4096) {
+      .floor-stage {
+        width: auto;
+        height: 100vh;
+      }
     }
 
     /* =====================================
@@ -72,8 +84,9 @@
     }
 
     #floorImage {
+      width: 100%;
+      height: 100%;
       object-fit: fill;
-      /* stage already matches image ratio */
       user-select: none;
       pointer-events: none;
     }
@@ -465,145 +478,12 @@
     }
 
     /* =====================================
-       MOBILE PORTRAIT - VERTICAL STACK (no rotation)
-       The plan is 16:9 (landscape). On a portrait phone we STOP
-       rotating it and stop covering the viewport. The page becomes a
-       normal, scrollable vertical document:
-
-         1. the plan sits at the top at its natural 16:9 ratio, fitted
-            to the screen width - nothing cropped, nothing rotated,
-         2. the control bar + legend flow underneath it as real page
-            content (order: 2 on a column-flex body).
-
-       The SVG stays pixel-locked to the image because the stage still
-       carries the plan ratio (aspect-ratio) and both layers fill that
-       same box exactly - identical to desktop, just un-rotated.
+       MOBILE BEHAVIOR
+       Keep the floor plan viewport-fitted on phones too. The responsive
+       aspect-ratio rules above decide whether width or height controls
+       the image size; controls remain overlayed on top of the scene.
     ===================================== */
-    @media (max-width: 768px) and (orientation: portrait) {
-
-      /* the page scrolls vertically again */
-      html,
-      body {
-        height: auto;
-        min-height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-        background: #F4F7F5;
-      }
-
-      /* ---------- 1. plan block: natural ratio, top of the page ---------- */
-      .floor-container {
-        position: relative;
-        inset: auto;
-        order: 1;
-        width: 100%;
-        height: auto;
-        overflow: hidden;
-        background: #EDF2EE;
-        border-bottom: 1px solid #E1E8E3;
-      }
-
-      .floor-stage {
-        position: relative;
-        top: auto;
-        left: auto;
-        width: 100%;
-        height: auto;
-        aspect-ratio: var(--plan-w) / var(--plan-h);
-        transform: none;
-      }
-
-      /* image + svg keep sharing the exact same box */
-      #floorImage,
-      #floorSVG {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      #floorImage {
-        object-fit: fill;
-        /* the stage already matches the 16:9 plan ratio */
-      }
-
-      /* ---------- 2. controls + legend below, in normal flow ---------- */
-      #eldTopBar {
-        position: static;
-        order: 2;
-        top: auto;
-        left: auto;
-        right: auto;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 10px 10px 16px;
-        pointer-events: auto;
-      }
-
-      .eldBar-panel {
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        padding: 8px 10px;
-        border-radius: 12px;
-        background: #fff;
-        box-shadow: 0 2px 10px rgba(20, 35, 26, .07);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-      }
-
-      /* there is room for the label again now that the bar is full width */
-      #eldBackBtn span {
-        display: inline;
-      }
-
-      #eldBackBtn {
-        font-size: 12px;
-      }
-
-      .eldBar-plot {
-        font-size: 12px;
-      }
-
-      #availabilityToggle {
-        margin-left: auto;
-        font-size: 12px;
-      }
-
-      #legend {
-        flex-wrap: wrap;
-      }
-
-      /* the bar is page content now, so never fade it with the modal */
-      #eldTopBar.is-hidden {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      #floorNav,
-      .floor-nav,
-      #floorSelector,
-      .floor-switcher {
-        position: fixed !important;
-        top: auto !important;
-        bottom: 20px !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-        z-index: 200 !important;
-      }
-
-      #tooltip {
-        font-size: 11px;
-        max-width: 80vw;
-      }
-
+    @media (max-width: 768px) {
       #floorSVG .unit {
         stroke-width: 4;
       }
@@ -1065,91 +945,27 @@
   <div class="floor-container">
     <div class="floor-stage">
 
-      <!-- Floor plan image: must be 3840 x 2160 (16:9) so it matches the SVG viewBox -->
+      <!-- Floor plan image: 2303 x 4096; SVG below uses the same aspect ratio. -->
       <img src="4Floor.png" id="floorImage" alt="Floor Plan">
 
       <!-- SVG overlay -->
-      <svg id="floorSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8192 4609" preserveAspectRatio="none">
+      <svg id="floorSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2303 4096" preserveAspectRatio="none">
 
         <path id="Floor 1" class="unit" data-unit="130" data-floor="Floor 1"
-          d="m5584.33 2922.67-51 4s-23-17-25-20-44-25-47-25h-84s-74 40-81 44-53 37-53 37l-16-17s-21-32-23-36 0-34 0-34-28-48-29-51-44-23-44-23l-35 9-17 99.89h-9l-41-30.89s-81-28-89-33-38 0-41 0 16 39 16 39l42 16 72 48s-47 2-52 6-55 0-55 0l-41 7-34 14-2451-14 153.23-40.45 2.25-514.98 196.41-7.02-96.66-15.33 2558.66-.67-71.33 12.34 441.57 5.11z" />
+          d="m1912.8 2653.5 5.7-6-12-7-9-4-17-5-10-8-8 1-15-1-17 3-13 5-23 9s3-6-9 7c-9.5 10.3-10.8 11.8-11 12l-13 11-24 4 1-13 1-24s15-8-1-18l-16-10h-20l-17-2v46.7l-25-13.7-18-14-28-5-17-12-16 2-27 7-9 5 28 17 14 10 6 5-1221-4 64-24 1.8-322.8 86.2-1.2-25-5 1279 2 137.5 5.3 1.5 321.7 63 26z" />
         <path id="Floor 2" class="unit" data-unit="131" data-floor="Floor 2"
-          d="m5138.89 2396.56 71.33-12.34-2558.66.67 96.66 15.33-196.41 7.02 2.33-532.85 220.08-4.17-128.66-58 2561.33-1.33-84.67 53.33 454.12-16.11 4.12 553.56z" />
+         d="m1778.5 2300.5-1279-2 25 5-86.2 1.3 1.8-326.5h104.5l-46.1-29.8 1284 4-29 20h160.9l1.6 333.3z" />
         <path id="Floor 3" class="unit" data-unit="132" data-floor="Floor 3"
-          d="m5122.22 1864.22 84.67-53.33-2561.33 1.33 128.66 58-220.08 4.17 2.33-532.62 216.53 5.45-117.33-104 2546.89 1.67-86.23 98.22 456.28 3.79 3.73 501.21z" />
+         d="m1753.5 1972.5 29-20-1284-4 46.1 29.8H440.1l1.9-345.8h87.5l-32-29h1285l-27 29 157.3-3.8 1.6 343.8z" />
         <path id="Floor 4" class="unit" data-unit="133" data-floor="Floor 4"
-          d="m5742.67 652.89-173.78 193.33 3.72 500.68-456.28-3.79 86.23-98.22-2546.89-1.67 117.33 104-216.53-5.45 2.2-501.88-112.34-118.67-82.33-101-14-17-3.33-4.66-2.34-7.34h322v-52.66L2567 399.89l-4.33-11 2731.55-1.78-3.55 13.33-100 170.23 2.22 15.55L5784 597.33z" />
+          d="m2002.5 1204.5-1 8-2 2-3 5-4 5-3 6-78 126 1.3 272.2-157.3 3.8 27-29h-1285l32 29H442l1.5-272-79-123-6-10-1-5-6-6v-4.7l-3-6.3 169 1 1-30-53-102L1833 1071s4 1.5 0 5.7-5 5.3-5 5.3l-4 9-45.5 93.5v20z" />
 
       </svg>
 
     </div>
   </div>
 
-  <script>
-    /* =====================================
-       UNIT DETAILS - dummy values, replace later
-       Keys are the path ids from the new SVG.
-    ===================================== */
-    window.unitDetails = {
-      "130": { unit: "Plot 130", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "131": { unit: "Plot 131", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "132": { unit: "Plot 132", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "133": { unit: "Plot 133", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "134": { unit: "Plot 134", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "135": { unit: "Plot 135", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "136": { unit: "Plot 136", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "137": { unit: "Plot 137", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "186": { unit: "Plot 186", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "185": { unit: "Plot 185", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "184": { unit: "Plot 184", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "183": { unit: "Plot 183", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "182": { unit: "Plot 182", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "181": { unit: "Plot 181", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "138": { unit: "Plot 138", totalArea: "300 sq.yd (2,700 sq.ft)", length: "90 ft", width: "30 ft" },
-      "139": { unit: "Plot 139", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "140": { unit: "Plot 140", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "141": { unit: "Plot 141", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "142": { unit: "Plot 142", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "143": { unit: "Plot 143", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "144": { unit: "Plot 144", totalArea: "310 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "145": { unit: "Plot 145", totalArea: "214.38 sq.yd (2,790 sq.ft)", length: "90 ft", width: "31 ft" },
-      "180": { unit: "Plot 180", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "179": { unit: "Plot 179", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "178": { unit: "Plot 178", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "177": { unit: "Plot 177", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "176": { unit: "Plot 176", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "175": { unit: "Plot 175", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "174": { unit: "Plot 174", totalArea: "320 sq.yd (2,880 sq.ft)", length: "90 ft", width: "32 ft" },
-      "173": { unit: "Plot 173", totalArea: "330 sq.yd (2,970 sq.ft)", length: "90 ft", width: "33 ft" },
-      "170": { unit: "Plot 170", totalArea: "382.5 sq.yd (3,442 sq.ft)", length: "90 ft", width: "38.25 ft" },
-      "171": { unit: "Plot 171", totalArea: "400 sq.yd (3,600 sq.ft)", length: "90 ft", width: "40 ft" },
-      "172": { unit: "Plot 172", totalArea: "400 sq.yd (3,600 sq.ft)", length: "90 ft", width: "40 ft" },
-      "169": { unit: "Plot 169", totalArea: "382.5 sq.yd (3,442 sq.ft)", length: "90 ft", width: "38.25 ft" },
-      "168": { unit: "Plot 168", totalArea: "400 sq.yd (3,600 sq.ft)", length: "90 ft", width: "40 ft" },
-      "167": { unit: "Plot 167", totalArea: "400 sq.yd (3,600 sq.ft)", length: "90 ft", width: "40 ft" },
-      "146": { unit: "Plot 146", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "147": { unit: "Plot 147", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "148": { unit: "Plot 148", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "149": { unit: "Plot 149", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "150": { unit: "Plot 150", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "151": { unit: "Plot 151", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "152": { unit: "Plot 152", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "153": { unit: "Plot 153", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "154": { unit: "Plot 154", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "155": { unit: "Plot 155", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "156": { unit: "Plot 156", totalArea: "350 sq.yd (3,150 sq.ft)", length: "90 ft", width: "35 ft" },
-      "166": { unit: "Plot 166", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "165": { unit: "Plot 165", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "164": { unit: "Plot 164", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "163": { unit: "Plot 163", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "162": { unit: "Plot 162", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "161": { unit: "Plot 161", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "160": { unit: "Plot 160", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "159": { unit: "Plot 159", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "158": { unit: "Plot 158", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" },
-      "157": { unit: "Plot 157", totalArea: "TBD sq.yd", length: "90 ft", width: "TBD ft" }
-    };
-  </script>
+  
 
   <script>
     /* ============================================================
