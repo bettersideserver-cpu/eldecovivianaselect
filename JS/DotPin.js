@@ -422,32 +422,57 @@
         ]
     };
 
+    // ---------------------------------------------------------------
+    // Layout-space geometry.
+    //
+    // IMPORTANT: this deliberately uses offsetWidth/offsetHeight/offsetLeft/
+    // offsetTop instead of getBoundingClientRect().
+    //
+    // getBoundingClientRect() returns the SCREEN-SPACE axis-aligned bounding
+    // box, so as soon as an ancestor is rotated (see JS/MapRotate.js, which
+    // rotates the whole map 90deg on mobile portrait) it reports swapped
+    // width/height and every pin lands in the wrong place.
+    //
+    // offset* values are pre-transform layout values, so they are identical
+    // whether the map is rotated or not. Pins stay glued to the image.
+    // ---------------------------------------------------------------
     function getImageBox(img, wrapper) {
-        const imageRect = img.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
         const naturalW = img.naturalWidth || Number(img.getAttribute("width")) || 4096;
         const naturalH = img.naturalHeight || Number(img.getAttribute("height")) || 2286;
         const aspect = naturalW / naturalH;
 
-        let visibleW = imageRect.width;
-        let visibleH = imageRect.height;
+        // The img box in layout pixels (its own offsetParent is .image-wrapper,
+        // which is a positioned element, so offsetLeft/Top are relative to it).
+        const imgW = img.offsetWidth || wrapper.clientWidth;
+        const imgH = img.offsetHeight || wrapper.clientHeight;
+
+        let visibleW = imgW;
+        let visibleH = imgH;
 
         // Handles contain-style image fitting so coordinates remain attached to the image.
-        if (visibleW / visibleH > aspect) {
-            visibleH = imageRect.height;
+        if (imgW / imgH > aspect) {
+            visibleH = imgH;
             visibleW = visibleH * aspect;
         } else {
-            visibleW = imageRect.width;
+            visibleW = imgW;
             visibleH = visibleW / aspect;
         }
 
         return {
-            left: (imageRect.left - wrapperRect.left) + (imageRect.width - visibleW) / 2,
-            top: (imageRect.top - wrapperRect.top) + (imageRect.height - visibleH) / 2,
+            left: img.offsetLeft + (imgW - visibleW) / 2,
+            top: img.offsetTop + (imgH - visibleH) / 2,
             width: visibleW,
             height: visibleH,
             naturalW,
             naturalH
+        };
+    }
+
+    // Wrapper size in layout pixels (again: rotation-proof, unlike getBoundingClientRect).
+    function getWrapperSize(wrapper) {
+        return {
+            width: wrapper.offsetWidth || wrapper.clientWidth || 1,
+            height: wrapper.offsetHeight || wrapper.clientHeight || 1
         };
     }
 
@@ -458,7 +483,7 @@
         if (!img || !layer || !wrapper) return;
 
         const box = getImageBox(img, wrapper);
-        const wrapperRect = wrapper.getBoundingClientRect();
+        const wrapperSize = getWrapperSize(wrapper);
 
         positionSelectedOverlay();
 
@@ -476,8 +501,8 @@
             const xPx = box.left + (xPct / 100) * box.width;
             const yPx = box.top + (yPct / 100) * box.height;
 
-            pin.style.left = `${((xPx / wrapperRect.width) * 100).toFixed(5)}%`;
-            pin.style.top = `${((yPx / wrapperRect.height) * 100).toFixed(5)}%`;
+            pin.style.left = `${((xPx / wrapperSize.width) * 100).toFixed(5)}%`;
+            pin.style.top = `${((yPx / wrapperSize.height) * 100).toFixed(5)}%`;
         });
     }
 
@@ -588,7 +613,6 @@
         if (!img || !layer || !wrapper || !selectedOverlay) return;
 
         const box = getImageBox(img, wrapper);
-        const wrapperRect = wrapper.getBoundingClientRect();
 
         selectedOverlay.style.left = `${box.left}px`;
         selectedOverlay.style.top = `${box.top}px`;
@@ -749,11 +773,22 @@
         return card;
     }
 
+    // CONFIG stores time as a bare number ("1"), which rendered as an
+    // unitless "TIME 1" in the card. Append the unit when the value is just a
+    // number, and leave anything already carrying a unit ("5 min", "1 hr")
+    // untouched so the config stays free-form.
+    function formatTime(value) {
+        if (value == null || value === "") return "—";
+        const text = String(value).trim();
+        if (!text) return "—";
+        return /^[\d.]+$/.test(text) ? `${text} min` : text;
+    }
+
     window.showDotPinInfo = function (info) {
         const card = ensureDotPinInfoCard();
         card.querySelector(".dot-pin-info-card__name").textContent = info.name || "Place";
         card.querySelector(".dot-pin-info-card__distance").textContent = info.distance || "—";
-        card.querySelector(".dot-pin-info-card__time").textContent = info.time || "—";
+        card.querySelector(".dot-pin-info-card__time").textContent = formatTime(info.time);
         card.classList.add("is-visible");
     };
 

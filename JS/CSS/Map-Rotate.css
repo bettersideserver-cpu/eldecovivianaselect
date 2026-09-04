@@ -36,6 +36,19 @@
     /* 90deg = clockwise (map's left edge moves to the top of the screen).
        Use -90deg for counter-clockwise. */
     --map-rotate: 90deg;
+
+    /* Map.jpg is 8192 x 4175. The frame is sized to this EXACT ratio so the
+       image's layout box equals its rendered content box (zero letterbox).
+       Every coordinate in this project is a percentage of the image box —
+       pins, the selected-route SVG and the .Cutout outline — so any letterbox
+       silently offsets and stretches all three. Keeping the box on-ratio is
+       what makes them land correctly. Update if Map.jpg is ever re-exported. */
+    --map-ar: 1.96216;
+
+    /* Uniform shrink for pin logos + labels on mobile. The artwork is authored
+       for a ~1440px-wide map; on a 390px screen it needs to come right down.
+       One knob scales the logo, the label and their offsets together. */
+--pin-mobile-scale: 0.3;
 }
 
 /* ──────────────────────────────────────────────────────────────────
@@ -71,9 +84,19 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        /* Swapped on purpose: the frame is as WIDE as the viewport is TALL. */
-        width: var(--vh, 100vh);
-        height: var(--vw, 100vw);
+        /* Swapped on purpose: the frame's WIDTH becomes the on-screen HEIGHT
+           once it is rotated 90deg.
+
+           Sized to the map's exact aspect ratio (--map-ar) and clamped to the
+           rotated viewport, so the whole map still fits with no zoom AND the
+           image box carries no letterbox. The two min() branches cover both
+           cases: width-limited (normal phones) and height-limited (very
+           narrow/tall viewports).
+
+           390 x 844 -> frame 765.2 x 390 (ratio 1.962), drawn on screen as
+           390 wide x 765.2 tall, centred with ~39px bars top and bottom. */
+        width: min(calc(var(--vw, 100vw) * var(--map-ar)), var(--vh, 100vh));
+        height: min(var(--vw, 100vw), calc(var(--vh, 100vh) / var(--map-ar)));
         transform: translate(-50%, -50%) rotate(var(--map-rotate));
         transform-origin: 50% 50%;
         will-change: transform;
@@ -130,14 +153,18 @@
        The frame is rotated by --map-rotate, so each pin's content is
        rotated back by the same amount. Net effect on screen: upright text,
        while the logo/label offsets still point "above" their dot. */
+    /* The trailing scale() shrinks the logo, the label and their offsets as
+       one unit — the pin's anchor point is unaffected because left/top are
+       percentages applied before the transform. Tune --pin-mobile-scale at
+       the top of this file; no need to touch the per-pin CONFIG in DotPin.js. */
     .map-rotate-frame .dot-pin__button {
-        transform: translate(-50%, -50%) rotate(calc(-1 * var(--map-rotate)));
+        transform: translate(-50%, -50%) rotate(calc(-1 * var(--map-rotate))) scale(var(--pin-mobile-scale, 0.5));
     }
 
-    /* Hover/selected states must keep the counter-rotation. */
+    /* Hover/selected states must keep the counter-rotation AND the scale. */
     .map-rotate-frame .dot-pin__button:hover,
     .map-rotate-frame .dot-pin__button:focus-visible {
-        transform: translate(-50%, -50%) rotate(calc(-1 * var(--map-rotate)));
+        transform: translate(-50%, -50%) rotate(calc(-1 * var(--map-rotate))) scale(var(--pin-mobile-scale, 0.5));
     }
 
     /* The selected-place line SVG is map geography — it MUST stay rotated
