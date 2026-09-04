@@ -75,6 +75,38 @@
         brand.style.left = ((xPx / wrapperW) * 100).toFixed(5) + "%";
         brand.style.top = ((yPx / wrapperH) * 100).toFixed(5) + "%";
         brand.classList.add("is-placed");
+        startAnimation(brand);
+    }
+
+    /* ── animation gate ─────────────────────────────────────────────
+       The logo SVG is INLINED in the page and ships with every
+       animation rule scoped under `.go`, so with no JS it simply shows
+       the finished mark. We add `.go` only once the logo is genuinely
+       on screen — i.e. after the map image has loaded AND the anchor
+       has been resolved (.is-placed) AND the opacity fade-in has
+       started. Previously the logo was an <img>, whose animation
+       auto-started the moment the 25 KB file arrived (~120 ms) and
+       finished by ~2.9 s — long before the 8192px Map.jpg landed and
+       the logo faded in on a real phone. That is why it looked static
+       on device but animated on a fast desktop.
+       ─────────────────────────────────────────────────────────────── */
+    var started = false;
+
+    function startAnimation(brand) {
+        if (started) return;
+        var svg = brand.querySelector(".plot-brand__svg");
+        if (!svg) return;                       // static-fallback markup
+        var img = document.querySelector(IMAGE_SELECTOR);
+        if (img && !img.complete) return;       // wait for the map
+        if (!brand.classList.contains("is-placed")) return;
+        started = true;
+        // one frame after the fade-in begins, so the first keyframes are
+        // painted while the logo is already becoming visible
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                svg.classList.add("go");
+            });
+        });
     }
 
     function schedule() {
@@ -117,6 +149,14 @@
 
     window.PlotBrand = {
         refresh: position,
+        /* replay the intro from the console / a future trigger */
+        replay: function () {
+            var svg = document.querySelector(".plot-brand__svg");
+            if (!svg) return;
+            svg.classList.remove("go");
+            void svg.getBoundingClientRect();
+            requestAnimationFrame(function () { svg.classList.add("go"); });
+        },
         setAnchor: function (x, y) {
             if (Number.isFinite(x)) ANCHOR.x = x;
             if (Number.isFinite(y)) ANCHOR.y = y;

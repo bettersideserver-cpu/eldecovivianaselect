@@ -100,11 +100,16 @@
    LOSES to it — portrait gave the logo its natural 2016px, landscape collapsed
    it to 26px. Scoping with the parent class (0,2,0) wins, and both width and
    height must be restated because each orientation branch sets a different one. */
+.plot-brand .plot-brand__svg,
 .plot-brand .plot-brand__img {
     display: block;
     flex: 0 0 auto;
     width: var(--brand-logo-w);
     height: auto;
+    /* An inline <svg> has no intrinsic pixel box once width/height attrs are
+       removed, so height:auto alone can collapse it. viewBox is 2016x1158. */
+    aspect-ratio: 2016 / 1158;
+    overflow: visible;
     /* No backing plate, per request. The drop-shadows are what make the
        white VIVIANA survive the BRIGHT washed-out fields, and the light
        greens survive the dark patches. Two stacked shadows: a tight dark
