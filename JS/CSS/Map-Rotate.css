@@ -48,7 +48,7 @@
     /* Uniform shrink for pin logos + labels on mobile. The artwork is authored
        for a ~1440px-wide map; on a 390px screen it needs to come right down.
        One knob scales the logo, the label and their offsets together. */
---pin-mobile-scale: 0.3;
+--pin-mobile-scale: 0.5;
 }
 
 /* ──────────────────────────────────────────────────────────────────
