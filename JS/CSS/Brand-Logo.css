@@ -1,0 +1,105 @@
+/* ═══════════════════════════════════════════════════════════════
+   BRAND LOGO — animated Eldeco Viviana mark, floats over the map
+   ---------------------------------------------------------------
+   Placement mirrors .prop-address (defined inline in Index.html)
+   so the two fixed cards read as one system: same surface, blur,
+   border, radius and edge offsets — just anchored top-LEFT.
+
+   The animation lives INSIDE the SVG file, so it plays even though
+   the file is referenced with <img>. Nothing to drive from JS.
+
+   IMPORTANT: the .brand-logo element must stay OUTSIDE
+   .map-rotate-stage / .map-rotate-frame, or it will be rotated 90°
+   along with the map on mobile portrait.
+   ═══════════════════════════════════════════════════════════════ */
+
+.brand-logo {
+    position: fixed;
+    top: 38px;
+    left: 24px;
+    z-index: 10001;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+
+    /* same card treatment as .prop-address */
+    background: var(--surface-2, rgba(255, 255, 255, 0.82));
+    border: 1px solid rgba(168, 120, 42, 0.18);
+    border-radius: 10px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 4px 18px rgba(23, 24, 29, 0.07);
+
+    /* purely decorative — never eat map clicks */
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.brand-logo__img {
+    display: block;
+    width: 158px;   /* 336 x 193 source -> 158 x 91 */
+    height: auto;
+}
+
+/* ═══ TABLET / SMALL LAPTOP ═══ */
+@media (max-width: 1024px) {
+    .brand-logo {
+        top: 30px;
+        left: 18px;
+        padding: 8px 12px;
+    }
+
+    .brand-logo__img {
+        width: 134px;
+    }
+}
+
+/* ═══ MOBILE ═══ */
+@media (max-width: 768px) {
+    .brand-logo {
+        top: 52px;          /* matches .prop-address mobile offset */
+        left: 12px;
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+
+    .brand-logo__img {
+        width: 112px;
+    }
+}
+
+/* ═══ VERY SMALL PHONES ═══ */
+@media (max-width: 360px) {
+    .brand-logo {
+        top: 48px;
+        left: 10px;
+        padding: 5px 9px;
+    }
+
+    .brand-logo__img {
+        width: 94px;
+    }
+}
+
+/* ═══ LANDSCAPE PHONES — vertical room is scarce, shrink further ═══ */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 480px) {
+    .brand-logo {
+        top: 10px;
+        left: 10px;
+        padding: 5px 9px;
+    }
+
+    .brand-logo__img {
+        width: 96px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* the SVG disables its own animation; nothing extra needed here */
+    .brand-logo {
+        transition: none;
+    }
+}
