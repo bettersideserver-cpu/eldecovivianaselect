@@ -502,8 +502,8 @@
 
         // Read room from URL
         const params = new URLSearchParams(window.location.search);
-        const initialRoom = params.get("room") || "lobby";
-
+const initialRoom = params.get("room") || "lobby";
+let currentRoom = initialRoom;
 
 
         const viewer = new PANOLENS.Viewer({
@@ -513,17 +513,52 @@
         viewer.camera.fov = 100;
         viewer.camera.updateProjectionMatrix();
 
-        const rooms = {
-            lobby: new PANOLENS.ImagePanorama("images/Lobby.webp"),
-            dinning: new PANOLENS.ImagePanorama("images/Master-Bedroom.webp"),
-            room_1: new PANOLENS.ImagePanorama("images/1.webp"),
-            room_2: new PANOLENS.ImagePanorama("images/2.webp"),
-            room_3: new PANOLENS.ImagePanorama("images/3.webp"),
-            kitchen: new PANOLENS.ImagePanorama("images/Kitchen.webp"),
-            balcony: null  // will be set after floor system init
+      const rooms = {
+    lobby: new PANOLENS.ImagePanorama("images/Lobby.webp"),
+    dinning: new PANOLENS.ImagePanorama("images/Master-Bedroom.webp"),
+    room_1: new PANOLENS.ImagePanorama("images/1.webp"),
+    room_2: new PANOLENS.ImagePanorama("images/2.webp"),
+    room_3: new PANOLENS.ImagePanorama("images/3.webp"),
+    kitchen: new PANOLENS.ImagePanorama("images/Kitchen.webp"),
+    balcony: null
+};
 
-        };
+// High-quality JPG versions
+const highQualityImages = {
+    lobby: "images/Lobby.jpg",
+    dinning: "images/Master-Bedroom.jpg",
+    room_1: "images/1.jpg",
+    room_2: "images/2.jpg",
+    room_3: "images/3.jpg",
+    kitchen: "images/Kitchen.jpg"
+};
 
+// Load JPG in background
+Object.entries(highQualityImages).forEach(([roomName, jpgPath]) => {
+
+    const img = new Image();
+
+    img.onload = function () {
+
+        const highQualityPanorama =
+            new PANOLENS.ImagePanorama(jpgPath);
+
+        highQualityPanorama.fadeDuration = 800;
+
+        viewer.add(highQualityPanorama);
+
+        // Replace WebP with high-quality JPG
+        rooms[roomName] = highQualityPanorama;
+
+        // If this is the room currently being viewed,
+        // switch to JPG immediately
+        if (currentRoom === roomName) {
+            viewer.setPanorama(highQualityPanorama);
+        }
+    };
+
+    img.src = jpgPath;
+});
         
         // ── Balcony floor system ──
         let currentBalconyFloor = parseInt(selectedFloor) || 1;
